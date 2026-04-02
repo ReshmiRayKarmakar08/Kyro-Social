@@ -34,6 +34,7 @@ import {
   LanguageRounded,
   AccessibilityNewRounded,
   DownloadRounded,
+  BookmarkBorderRounded,
   HelpOutlineRounded,
   LogoutRounded,
 } from '@mui/icons-material';
@@ -348,6 +349,10 @@ const SettingsPage = () => {
           <ListItem button onClick={() => setAlert({ open: true, message: 'Archive export request submitted.', severity: 'success' })}>
             <ListItemIcon><DownloadRounded /></ListItemIcon>
             <ListItemText primary="Archiving and downloading" secondary="Request your data export" />
+          </ListItem>
+          <ListItem button onClick={() => navigate('/saved')}>
+            <ListItemIcon><BookmarkBorderRounded /></ListItemIcon>
+            <ListItemText primary="Saved posts" secondary="View posts you bookmarked" />
           </ListItem>
         </List>
 
