@@ -32,6 +32,7 @@ import {
   LocationOnRounded,
   FavoriteRounded,
   ChatBubbleRounded,
+  MessageRounded,
   PhotoCameraRounded,
   CloseRounded,
 } from '@mui/icons-material';
@@ -93,6 +94,22 @@ const ProfilePage = () => {
   const [imageViewerSrc, setImageViewerSrc] = useState('');
   const [imageViewerTitle, setImageViewerTitle] = useState('');
   const [alert, setAlert] = useState({ open: false, message: '', severity: 'info' });
+
+  const stripDeletedComments = (comments = [], commentId) => {
+    const toDelete = new Set([String(commentId)]);
+    let changed = true;
+    while (changed) {
+      changed = false;
+      comments.forEach((item) => {
+        const parentId = item.parentCommentId ? String(item.parentCommentId) : null;
+        if (parentId && toDelete.has(parentId) && !toDelete.has(String(item._id))) {
+          toDelete.add(String(item._id));
+          changed = true;
+        }
+      });
+    }
+    return comments.filter((item) => !toDelete.has(String(item._id)));
+  };
 
   const isOwnProfile = currentUser?.username === username;
 
@@ -236,11 +253,13 @@ const ProfilePage = () => {
     }
   };
 
-  const handleComment = async (postId, text) => {
+  const handleComment = async (postId, text, parentCommentId = null) => {
     const optimisticComment = {
       _id: `temp-${Date.now()}`,
       username: currentUser?.username || 'you',
       text,
+      parentCommentId: parentCommentId || null,
+      mentionUsernames: [],
       createdAt: new Date().toISOString(),
     };
 
@@ -251,7 +270,23 @@ const ProfilePage = () => {
     )));
 
     try {
-      await api.post(`/posts/${postId}/comment`, { text });
+      const res = await api.post(`/posts/${postId}/comment`, {
+        text,
+        parentCommentId: parentCommentId || undefined,
+      });
+      const savedComment = res.data?.comment;
+      if (savedComment) {
+        setPosts((prev) => prev.map((post) => (
+          post._id === postId
+            ? {
+              ...post,
+              comments: (post.comments || []).map((item) => (
+                item._id === optimisticComment._id ? { ...item, ...savedComment } : item
+              )),
+            }
+            : post
+        )));
+      }
     } catch {
       const res = await api.get(`/posts/user/${username}?type=${activeTab}`);
       setPosts(res.data.posts || []);
@@ -273,6 +308,45 @@ const ProfilePage = () => {
         message: err.response?.data?.message || 'Failed to delete post.',
         severity: 'error',
       });
+    }
+  };
+
+  const handleToggleSave = async (postId) => {
+    setPosts((prev) => prev.map((post) => (
+      post._id === postId ? { ...post, isSaved: !post.isSaved } : post
+    )));
+
+    try {
+      const res = await api.put(`/posts/${postId}/save`);
+      const saved = Boolean(res.data?.saved);
+      setPosts((prev) => prev.map((post) => (
+        post._id === postId ? { ...post, isSaved: saved } : post
+      )));
+      setAlert({ open: true, message: saved ? 'Post saved' : 'Removed from saved posts', severity: 'success' });
+    } catch {
+      const res = await api.get(`/posts/user/${username}?type=${activeTab}`);
+      setPosts(res.data.posts || []);
+      setAlert({ open: true, message: 'Failed to update saved post', severity: 'error' });
+    }
+  };
+
+  const handleDeleteComment = async (postId, commentId) => {
+    setPosts((prev) => prev.map((post) => {
+      if (post._id !== postId) return post;
+      const nextComments = stripDeletedComments(post.comments || [], commentId);
+      return {
+        ...post,
+        comments: nextComments,
+        commentCount: nextComments.length,
+      };
+    }));
+
+    try {
+      await api.delete(`/posts/${postId}/comment/${commentId}`);
+    } catch {
+      const res = await api.get(`/posts/user/${username}?type=${activeTab}`);
+      setPosts(res.data.posts || []);
+      setAlert({ open: true, message: 'Failed to delete comment', severity: 'error' });
     }
   };
 
@@ -349,14 +423,38 @@ const ProfilePage = () => {
                 Edit Profile
               </Button>
             ) : (
-              <Button
-                variant={isFollowing ? 'outlined' : 'contained'}
-                size="small"
-                onClick={handleFollow}
-                sx={{ borderRadius: 50, textTransform: 'none', fontWeight: 700, px: 2.5 }}
-              >
-                {isFollowing ? 'Following' : 'Follow'}
-              </Button>
+              <>
+                <Button
+                  variant={isFollowing ? 'outlined' : 'contained'}
+                  size="small"
+                  onClick={handleFollow}
+                  sx={{ borderRadius: 50, textTransform: 'none', fontWeight: 700, px: 2.5 }}
+                >
+                  {isFollowing ? 'Following' : 'Follow'}
+                </Button>
+                <IconButton
+                  onClick={() => {
+                    if (!isFollowing) {
+                      setAlert({ open: true, message: 'Follow this account first to start messaging.', severity: 'info' });
+                    } else {
+                      navigate(`/messages?user=${profile.username}`);
+                    }
+                  }}
+                  sx={{
+                    width: 38,
+                    height: 38,
+                    border: (theme) => `1px solid ${theme.palette.mode === 'light' ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.18)'}`,
+                    color: isFollowing ? '#FF6154' : 'text.secondary',
+                    '&:hover': {
+                      borderColor: '#FF6154',
+                      color: '#FF6154',
+                      bgcolor: 'rgba(255,97,84,0.06)',
+                    },
+                  }}
+                >
+                  <MessageRounded sx={{ fontSize: 18 }} />
+                </IconButton>
+              </>
             )}
           </Box>
 
@@ -435,7 +533,16 @@ const ProfilePage = () => {
             </Box>
           ) : (
             posts.map((post, index) => (
-              <PostCard key={post._id} post={post} onLike={handleLike} onComment={handleComment} onDelete={handleDeletePost} index={index} />
+              <PostCard
+                key={post._id}
+                post={post}
+                onLike={handleLike}
+                onComment={handleComment}
+                onDeleteComment={handleDeleteComment}
+                onDelete={handleDeletePost}
+                onSave={handleToggleSave}
+                index={index}
+              />
             ))
           )}
         </AnimatePresence>

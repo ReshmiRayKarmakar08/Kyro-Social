@@ -4,6 +4,7 @@ import {
   HomeRounded,
   SearchRounded,
   NotificationsNoneRounded,
+  ChatRounded,
   PersonOutlineRounded,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -19,13 +20,15 @@ const BottomNav = () => {
     '/',
     '/search',
     '/notifications',
+    '/messages',
     user?.username ? `/profile/${user.username}` : '/auth',
   ], [user?.username]);
 
   const value = useMemo(() => {
-    if (location.pathname.startsWith('/profile/')) return 3;
+    if (location.pathname.startsWith('/profile/')) return 4;
     if (location.pathname.startsWith('/search') || location.pathname.startsWith('/explore')) return 1;
     if (location.pathname.startsWith('/notifications')) return 2;
+    if (location.pathname.startsWith('/messages')) return 3;
     return 0;
   }, [location.pathname]);
 
@@ -90,6 +93,7 @@ const BottomNav = () => {
             { label: 'Home', icon: <HomeRounded />, id: 'nav-home' },
             { label: 'Explore', icon: <SearchRounded />, id: 'nav-search' },
             { label: 'Notifications', icon: <NotificationsNoneRounded />, id: 'nav-notifications' },
+            { label: 'Messages', icon: <ChatRounded />, id: 'nav-messages' },
             { label: 'Profile', icon: <PersonOutlineRounded />, id: 'nav-profile' },
           ].map((item, i) => (
             <BottomNavigationAction

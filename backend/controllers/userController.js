@@ -3,6 +3,7 @@ const Post = require('../models/Post');
 const asyncHandler = require('../utils/asyncHandler');
 const { uploadImage } = require('../utils/cloudinary');
 const { pushNotification } = require('../utils/notifications');
+const { sendActivityEmail, sendProfileUpdatedEmail } = require('../utils/email');
 
 const sanitizeUser = (user) => ({
   id: user._id,
@@ -43,6 +44,45 @@ const deepMergeSettings = (target = {}, source = {}) => {
     }
   });
   return output;
+};
+
+const shouldSendNotification = (user, key) => Boolean(user?.settings?.notifications?.[key] ?? true);
+const shouldSendEmailNotification = (user, key) => Boolean(user?.settings?.emailNotifications?.[key] ?? false);
+const toDateKey = (date = new Date()) => date.toISOString().slice(0, 10);
+
+const sendUserActivityNotification = async ({
+  targetUser,
+  type,
+  settingKey,
+  fromUsername,
+  postId,
+  text,
+}) => {
+  if (!targetUser || !settingKey) return;
+  if (String(targetUser.username).toLowerCase() === String(fromUsername || '').toLowerCase()) return;
+
+  if (shouldSendNotification(targetUser, settingKey)) {
+    await pushNotification({
+      toUsername: targetUser.username,
+      type,
+      fromUsername,
+      postId,
+      text,
+    });
+  }
+
+  if (shouldSendEmailNotification(targetUser, settingKey) && targetUser.email) {
+    const frontendBase = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
+    try {
+      await sendActivityEmail(targetUser.email, targetUser.name, {
+        title: 'New activity on your Kyro profile',
+        message: text,
+        ctaUrl: `${frontendBase}/notifications`,
+      });
+    } catch {
+      // Non-blocking
+    }
+  }
 };
 
 const buildProfileStats = async (userId) => {
@@ -104,12 +144,28 @@ exports.getProfile = asyncHandler(async (req, res) => {
 
 exports.updateProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
+  const changedFields = [];
 
-  if (req.body.name) user.name = req.body.name;
-  if (typeof req.body.bio === 'string') user.bio = req.body.bio;
-  if (typeof req.body.website === 'string') user.website = req.body.website.trim();
-  if (typeof req.body.headline === 'string') user.headline = req.body.headline.trim();
-  if (typeof req.body.location === 'string') user.location = req.body.location.trim();
+  if (req.body.name && req.body.name !== user.name) {
+    user.name = req.body.name;
+    changedFields.push('Name');
+  }
+  if (typeof req.body.bio === 'string' && req.body.bio !== user.bio) {
+    user.bio = req.body.bio;
+    changedFields.push('Bio');
+  }
+  if (typeof req.body.website === 'string' && req.body.website.trim() !== user.website) {
+    user.website = req.body.website.trim();
+    changedFields.push('Website');
+  }
+  if (typeof req.body.headline === 'string' && req.body.headline.trim() !== user.headline) {
+    user.headline = req.body.headline.trim();
+    changedFields.push('Headline');
+  }
+  if (typeof req.body.location === 'string' && req.body.location.trim() !== user.location) {
+    user.location = req.body.location.trim();
+    changedFields.push('Location');
+  }
 
   if (req.body.username && req.body.username !== user.username) {
     const usernameExists = await User.exists({ username: req.body.username });
@@ -117,6 +173,7 @@ exports.updateProfile = asyncHandler(async (req, res) => {
       return res.status(409).json({ message: 'Username already in use' });
     }
     user.username = req.body.username;
+    changedFields.push('Username');
   }
 
   const profilePictureFile = req.files?.profilePicture?.[0];
@@ -125,14 +182,24 @@ exports.updateProfile = asyncHandler(async (req, res) => {
   if (profilePictureFile) {
     const image = await uploadImage(profilePictureFile.buffer, 'kyro-social/profile-pictures');
     user.profilePicture = image.url;
+    changedFields.push('Profile picture');
   }
 
   if (coverPhotoFile) {
     const image = await uploadImage(coverPhotoFile.buffer, 'kyro-social/cover-photos');
     user.coverPhoto = image.url;
+    changedFields.push('Cover photo');
   }
 
   await user.save();
+
+  if (user.email && changedFields.length > 0) {
+    try {
+      await sendProfileUpdatedEmail(user.email, user.name, { changedFields });
+    } catch {
+      // non-blocking
+    }
+  }
 
   res.status(200).json({
     message: 'Profile updated successfully',
@@ -169,8 +236,8 @@ exports.toggleFollow = asyncHandler(async (req, res) => {
   }
 
   const [currentUser, targetUser] = await Promise.all([
-    User.findById(req.user._id),
-    User.findOne({ username: targetUsername }),
+    User.findById(req.user._id).select('username following'),
+    User.findOne({ username: targetUsername }).select('username followers email name settings'),
   ]);
 
   if (!targetUser) {
@@ -190,9 +257,10 @@ exports.toggleFollow = asyncHandler(async (req, res) => {
   await Promise.all([currentUser.save(), targetUser.save()]);
 
   if (!alreadyFollowing) {
-    await pushNotification({
-      toUsername: targetUser.username,
+    await sendUserActivityNotification({
+      targetUser,
       type: 'follow',
+      settingKey: 'follows',
       fromUsername: currentUser.username,
       text: `${currentUser.username} started following you`,
     });
@@ -203,6 +271,66 @@ exports.toggleFollow = asyncHandler(async (req, res) => {
     isFollowing: !alreadyFollowing,
     followerCount: targetUser.followers.length,
   });
+});
+
+exports.getFollowSuggestions = asyncHandler(async (req, res) => {
+  const me = await User.findById(req.user._id).select('username following followers settings email name mailMeta');
+  const excluded = new Set([me.username, ...(me.following || [])]);
+
+  const suggestions = await User.find({
+    username: { $nin: [...excluded] },
+  })
+    .select('name username profilePicture headline followers')
+    .sort({ createdAt: -1 })
+    .limit(8)
+    .lean();
+
+  const hydrated = suggestions.map((user) => ({
+    id: user._id,
+    name: user.name,
+    username: user.username,
+    profilePicture: user.profilePicture || '',
+    headline: user.headline || '',
+    mutualFollowers: (user.followers || []).filter((follower) => (me.following || []).includes(follower)).length,
+    followerCount: (user.followers || []).length,
+  }));
+
+  const todayKey = toDateKey();
+  const currentMailMeta = me.mailMeta?.toObject?.() || me.mailMeta || {};
+  const isSameDay = currentMailMeta.suggestionWindowDate === todayKey;
+  const currentCount = isSameDay ? (currentMailMeta.suggestionMailCount || 0) : 0;
+  const canSendSuggestionMail = currentCount < 2;
+
+  const shouldNotify = hydrated.length >= 3 && shouldSendNotification(req.user, 'suggestions');
+  if (shouldNotify) {
+    await pushNotification({
+      toUsername: req.user.username,
+      type: 'suggestion_follow',
+      text: `Discover ${hydrated.length} people you may want to follow`,
+    });
+
+    const suggestionEmailFeatureEnabled = process.env.ENABLE_SUGGESTION_EMAIL === 'true';
+    if (suggestionEmailFeatureEnabled && shouldSendEmailNotification(me, 'suggestions') && me.email && canSendSuggestionMail) {
+      const frontendBase = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
+      try {
+        await sendActivityEmail(me.email, me.name, {
+          title: 'New people to follow on Kyro',
+          message: `We found ${hydrated.length} users you might like to follow.`,
+          ctaUrl: `${frontendBase}/explore`,
+        });
+        me.mailMeta = {
+          ...currentMailMeta,
+          suggestionWindowDate: todayKey,
+          suggestionMailCount: currentCount + 1,
+        };
+        await me.save();
+      } catch {
+        // Non-blocking
+      }
+    }
+  }
+
+  res.status(200).json({ users: hydrated });
 });
 
 exports.getNotifications = asyncHandler(async (req, res) => {

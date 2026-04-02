@@ -8,6 +8,8 @@ import ProfilePage from './pages/ProfilePage';
 import SearchPage from './pages/SearchPage';
 import NotificationsPage from './pages/NotificationsPage';
 import SettingsPage from './pages/SettingsPage';
+import MessagesPage from './pages/MessagesPage';
+import SavedPage from './pages/SavedPage';
 
 const FullScreenLoader = () => (
   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
@@ -51,6 +53,8 @@ const AppRoutes = () => (
       <Route path="explore" element={<SearchPage />} />
       <Route path="profile/:username" element={<ProfilePage />} />
       <Route path="notifications" element={<NotificationsPage />} />
+      <Route path="messages" element={<MessagesPage />} />
+      <Route path="saved" element={<SavedPage />} />
       <Route path="settings" element={<SettingsPage />} />
     </Route>
 

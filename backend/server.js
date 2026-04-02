@@ -45,6 +45,7 @@ app.use('/api/auth', authLimiter, require('./routes/authRoutes'));
 app.use('/api/posts', require('./routes/postRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/search', require('./routes/searchRoutes'));
+app.use('/api/messages', require('./routes/messageRoutes'));
 
 app.use(notFound);
 app.use(errorHandler);
@@ -68,6 +69,24 @@ const start = async () => {
       socket.join(`user:${username}`);
     }
 
+    // Typing indicators for messaging
+    socket.on('typing:start', ({ toUsername }) => {
+      if (toUsername) {
+        io.to(`user:${String(toUsername).toLowerCase()}`).emit('typing:start', {
+          fromUsername: username,
+        });
+      }
+    });
+
+    socket.on('typing:stop', ({ toUsername }) => {
+      if (toUsername) {
+        io.to(`user:${String(toUsername).toLowerCase()}`).emit('typing:stop', {
+          fromUsername: username,
+        });
+      }
+    });
+
+    // Legacy DM support
     socket.on('dm:send', async ({ toUsername, text }) => {
       if (!toUsername || !text) return;
       io.to(`user:${String(toUsername).toLowerCase()}`).emit('dm:message', {

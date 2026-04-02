@@ -2,7 +2,13 @@ const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 const asyncHandler = require('../utils/asyncHandler');
-const { sendOTPEmail, sendResetEmail, sendWelcomeEmail } = require('../utils/email');
+const {
+  sendOTPEmail,
+  sendResetEmail,
+  sendWelcomeEmail,
+  sendLoginAlertEmail,
+  sendPasswordChangedEmail,
+} = require('../utils/email');
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -144,6 +150,27 @@ exports.login = asyncHandler(async (req, res) => {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
 
+  const now = new Date();
+  const lastSent = user.mailMeta?.lastLoginMailAt ? new Date(user.mailMeta.lastLoginMailAt) : null;
+  const shouldSendLoginMail = !lastSent || (now.getTime() - lastSent.getTime()) > 30 * 60 * 1000;
+
+  if (shouldSendLoginMail && user.email) {
+    try {
+      await sendLoginAlertEmail(user.email, user.name, {
+        device: req.headers['user-agent'] || 'Unknown browser',
+        ip: req.headers['x-forwarded-for'] || req.ip || 'Unknown IP',
+        when: now,
+      });
+      user.mailMeta = {
+        ...(user.mailMeta?.toObject?.() || user.mailMeta || {}),
+        lastLoginMailAt: now,
+      };
+      await user.save();
+    } catch {
+      // non-blocking
+    }
+  }
+
   res.status(200).json({
     message: 'Login successful',
     token: generateToken(user._id, user.username),
@@ -225,6 +252,26 @@ exports.googleAuth = asyncHandler(async (req, res) => {
     } catch (error) {
       // ignore
     }
+  } else {
+    const now = new Date();
+    const lastSent = user.mailMeta?.lastLoginMailAt ? new Date(user.mailMeta.lastLoginMailAt) : null;
+    const shouldSendLoginMail = !lastSent || (now.getTime() - lastSent.getTime()) > 30 * 60 * 1000;
+    if (shouldSendLoginMail && user.email) {
+      try {
+        await sendLoginAlertEmail(user.email, user.name, {
+          device: req.headers['user-agent'] || 'Unknown browser',
+          ip: req.headers['x-forwarded-for'] || req.ip || 'Unknown IP',
+          when: now,
+        });
+        user.mailMeta = {
+          ...(user.mailMeta?.toObject?.() || user.mailMeta || {}),
+          lastLoginMailAt: now,
+        };
+        await user.save();
+      } catch {
+        // non-blocking
+      }
+    }
   }
 
   res.status(200).json({
@@ -283,6 +330,14 @@ exports.resetPassword = asyncHandler(async (req, res) => {
   user.otp = undefined;
   user.otpExpiry = undefined;
   await user.save();
+
+  if (user.email) {
+    try {
+      await sendPasswordChangedEmail(user.email, user.name);
+    } catch {
+      // non-blocking
+    }
+  }
 
   res.status(200).json({ message: 'Password reset successful' });
 });

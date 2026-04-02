@@ -17,6 +17,7 @@ import {
   PersonOutlineRounded,
   BookmarkBorderRounded,
   EditRounded,
+  ChatRounded,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -29,6 +30,7 @@ const navItems = [
   { label: 'Home', icon: <HomeRounded />, path: '/' },
   { label: 'Explore', icon: <SearchRounded />, path: '/search' },
   { label: 'Notifications', icon: <NotificationsNoneRounded />, path: '/notifications' },
+  { label: 'Messages', icon: <ChatRounded />, path: '/messages' },
   { label: 'Profile', icon: <PersonOutlineRounded />, path: '/profile' },
 ];
 
@@ -47,6 +49,8 @@ const Sidebar = () => {
       }
     }, 100);
   };
+
+  const isSavedActive = location.pathname.startsWith('/saved');
 
   return (
     <Drawer
@@ -219,20 +223,23 @@ const Sidebar = () => {
       <Box sx={{ mt: 'auto', pb: 4, px: 1 }}>
         <Divider sx={{ mb: 2, opacity: 0.5 }} />
         <ListItemButton
-          onClick={handleCreatePost}
+          onClick={() => navigate('/saved')}
           sx={{
             borderRadius: '14px',
-            color: 'text.secondary',
+            color: isSavedActive ? '#FF6154' : 'text.secondary',
             py: 1.2,
+            backgroundColor: isSavedActive
+              ? (theme) => theme.palette.mode === 'light' ? 'rgba(255,97,84,0.08)' : 'rgba(255,97,84,0.12)'
+              : 'transparent',
             '&:hover': { color: '#FF6154', backgroundColor: (theme) => theme.palette.mode === 'light' ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.04)' }
           }}
         >
-          <ListItemIcon sx={{ minWidth: 38, color: 'inherit' }}>
+          <ListItemIcon sx={{ minWidth: 38, color: isSavedActive ? '#FF6154' : 'inherit' }}>
             <BookmarkBorderRounded />
           </ListItemIcon>
           <ListItemText
             primary="Saved"
-            primaryTypographyProps={{ fontWeight: 600, fontSize: '0.9rem' }}
+            primaryTypographyProps={{ fontWeight: isSavedActive ? 800 : 600, fontSize: '0.9rem' }}
           />
         </ListItemButton>
       </Box>

@@ -13,6 +13,7 @@ const {
   markNotificationsRead,
   getSettings,
   updateSettings,
+  getFollowSuggestions,
 } = require('../controllers/userController');
 const { protect } = require('../middleware/auth');
 const validate = require('../middleware/validate');
@@ -24,6 +25,7 @@ router.get('/settings', protect, getSettings);
 router.put('/settings', protect, validate(updateSettingsSchema), updateSettings);
 router.get('/notifications', protect, getNotifications);
 router.put('/notifications/read', protect, markNotificationsRead);
+router.get('/suggestions/follow', protect, getFollowSuggestions);
 router.get('/search', protect, searchUsers);
 router.put(
   '/profile',

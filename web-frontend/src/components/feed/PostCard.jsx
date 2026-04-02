@@ -31,6 +31,7 @@ import {
   PersonRemoveRounded,
   LinkRounded,
   DeleteRounded,
+  SendRounded,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -41,12 +42,11 @@ import { useAuth } from '../../context/AuthContext';
 import logo from '../../assets/logo.png';
 import api from '../../api/axios';
 
-const PostCard = ({ post, onLike, onComment, onDelete, index = 0 }) => {
+const PostCard = ({ post, onLike, onComment, onDelete, onSave, onDeleteComment, index = 0 }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [commentOpen, setCommentOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [likesDialogOpen, setLikesDialogOpen] = useState(false);
@@ -58,6 +58,7 @@ const PostCard = ({ post, onLike, onComment, onDelete, index = 0 }) => {
   const likeCount = Number(post.likeCount || 0);
   const commentCount = Number(post.commentCount || 0);
   const shareCount = Number(post.shareCount || 0);
+  const isSaved = Boolean(post.isSaved);
 
   const handleFollow = async () => {
     setIsFollowing((prev) => !prev);
@@ -73,7 +74,7 @@ const PostCard = ({ post, onLike, onComment, onDelete, index = 0 }) => {
     setLoadingLikers(true);
     try {
       const res = await api.get(`/posts/${post._id}/likes`);
-      setLikers(res.data?.users || []);
+      setLikers(res.data?.users || res.data?.likes || []);
     } catch {
       // error handling
     } finally {
@@ -156,14 +157,29 @@ const PostCard = ({ post, onLike, onComment, onDelete, index = 0 }) => {
 
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               {!isOwnPost && (
-                <Button
-                  variant={isFollowing ? 'outlined' : 'text'}
-                  size="small"
-                  onClick={handleFollow}
-                  sx={{ borderRadius: '10px', fontSize: '0.8rem', fontWeight: 700, textTransform: 'none' }}
-                >
-                  {isFollowing ? 'Following' : 'Follow'}
-                </Button>
+                <>
+                  <Button
+                    variant={isFollowing ? 'outlined' : 'text'}
+                    size="small"
+                    onClick={handleFollow}
+                    sx={{ borderRadius: '10px', fontSize: '0.8rem', fontWeight: 700, textTransform: 'none' }}
+                  >
+                    {isFollowing ? 'Following' : 'Follow'}
+                  </Button>
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      if (!isFollowing) {
+                        window.alert('Follow this user first to start messaging.');
+                      } else {
+                        navigate(`/messages?user=${post.authorUsername}`);
+                      }
+                    }}
+                    sx={{ color: isFollowing ? '#FF6154' : 'text.disabled', '&:hover': { color: '#FF6154' } }}
+                  >
+                    <SendRounded sx={{ fontSize: 18, transform: 'rotate(-45deg)', mt: '-2px', ml: '2px' }} />
+                  </IconButton>
+                </>
               )}
 
               <IconButton size="small" onClick={(e) => setMenuAnchor(e.currentTarget)}>
@@ -240,8 +256,12 @@ const PostCard = ({ post, onLike, onComment, onDelete, index = 0 }) => {
               </Typography>
             </Box>
 
-            <IconButton size="medium" onClick={() => setSaved((prev) => !prev)} sx={{ color: saved ? '#FF6154' : 'text.secondary' }}>
-              {saved ? <BookmarkRounded sx={{ fontSize: 21 }} /> : <BookmarkBorderRounded sx={{ fontSize: 21 }} />}
+            <IconButton
+              size="medium"
+              onClick={() => onSave?.(post._id)}
+              sx={{ color: isSaved ? '#FF6154' : 'text.secondary' }}
+            >
+              {isSaved ? <BookmarkRounded sx={{ fontSize: 21 }} /> : <BookmarkBorderRounded sx={{ fontSize: 21 }} />}
             </IconButton>
           </Box>
 
@@ -272,6 +292,8 @@ const PostCard = ({ post, onLike, onComment, onDelete, index = 0 }) => {
         onClose={() => setCommentOpen(false)}
         comments={post.comments || []}
         onAddComment={onComment}
+        onDeleteComment={onDeleteComment}
+        canModerateComments={isOwnPost}
         postId={post._id}
       />
 
@@ -331,7 +353,7 @@ const PostCard = ({ post, onLike, onComment, onDelete, index = 0 }) => {
                       <Avatar src={u.profilePicture || logo} sx={{ width: 40, height: 40 }} />
                     </ListItemAvatar>
                     <ListItemText
-                      primary={u.name}
+                      primary={u.name || u.username}
                       secondary={u.headline || `@${u.username}`}
                       primaryTypographyProps={{ fontWeight: 700, fontSize: '0.9rem', color: 'text.primary' }}
                       secondaryTypographyProps={{ fontSize: '0.8rem', color: 'text.secondary' }}

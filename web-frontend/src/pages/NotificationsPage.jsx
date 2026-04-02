@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Card,
@@ -8,9 +8,13 @@ import {
   ListItemButton,
   ListItemText,
   Chip,
+  Avatar,
+  Divider,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
+import logo from '../assets/logo.png';
 
 const formatWhen = (value) => {
   try {
@@ -29,12 +33,40 @@ const NotificationsPage = () => {
     fetchNotifications,
     markNotificationsRead,
   } = useAuth();
+  const [suggestions, setSuggestions] = useState([]);
 
   useEffect(() => {
     if (isAuthenticated) {
       fetchNotifications();
     }
   }, [isAuthenticated, fetchNotifications]);
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (!isAuthenticated) return;
+      try {
+        const res = await api.get('/users/suggestions/follow');
+        setSuggestions(res.data?.users || []);
+      } catch {
+        setSuggestions([]);
+      }
+    };
+    fetchSuggestions();
+  }, [isAuthenticated]);
+
+  const mappedNotifications = useMemo(() => notifications.map((n) => {
+    if (n.text) return n;
+    const actor = n.fromUsername || 'Someone';
+    const textByType = {
+      like: `${actor} liked your post`,
+      comment: `${actor} commented on your post`,
+      mention: `${actor} mentioned you`,
+      follow: `${actor} started following you`,
+      suggestion_follow: 'You have new people to follow',
+      message: `${actor} sent you a message`,
+    };
+    return { ...n, text: textByType[n.type] || `${actor} sent a ${n.type} notification` };
+  }), [notifications]);
 
   if (!isAuthenticated) {
     return (
@@ -66,7 +98,7 @@ const NotificationsPage = () => {
         </Box>
       ) : (
         <List sx={{ p: 0 }}>
-          {notifications.map((n, idx) => (
+          {mappedNotifications.map((n, idx) => (
             <ListItemButton
               key={n._id || `${n.type}-${idx}`}
               onClick={() => {
@@ -87,6 +119,31 @@ const NotificationsPage = () => {
             </ListItemButton>
           ))}
         </List>
+      )}
+
+      {suggestions.length > 0 && (
+        <>
+          <Divider sx={{ my: 2 }} />
+          <Typography variant="subtitle1" fontWeight={800} sx={{ mb: 1 }}>
+            People you may want to follow
+          </Typography>
+          <List sx={{ p: 0 }}>
+            {suggestions.map((user) => (
+              <ListItemButton
+                key={user.username}
+                onClick={() => navigate(`/profile/${user.username}`)}
+                sx={{ mb: 1, borderRadius: 2 }}
+              >
+                <Avatar src={user.profilePicture || logo} sx={{ width: 36, height: 36, mr: 1.5 }} />
+                <ListItemText
+                  primary={user.name}
+                  secondary={`@${user.username}${user.headline ? ` • ${user.headline}` : ''}`}
+                  primaryTypographyProps={{ fontWeight: 700 }}
+                />
+              </ListItemButton>
+            ))}
+          </List>
+        </>
       )}
     </Card>
   );

@@ -90,15 +90,27 @@ const userSchema = new mongoose.Schema(
         trim: true,
       },
     ],
+    savedPosts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post',
+      },
+    ],
     joinedDate: {
       type: Date,
       default: Date.now,
+    },
+    mailMeta: {
+      lastLoginMailAt: { type: Date, default: null },
+      firstMessageMailSent: { type: Boolean, default: false },
+      suggestionWindowDate: { type: String, default: '' },
+      suggestionMailCount: { type: Number, default: 0 },
     },
     notifications: [
       {
         type: {
           type: String,
-          enum: ['like', 'comment', 'follow', 'message'],
+          enum: ['like', 'comment', 'mention', 'follow', 'message', 'suggestion_follow'],
           required: true,
         },
         fromUsername: {
@@ -151,8 +163,18 @@ const userSchema = new mongoose.Schema(
       notifications: {
         likes: { type: Boolean, default: true },
         comments: { type: Boolean, default: true },
+        mentions: { type: Boolean, default: true },
         follows: { type: Boolean, default: true },
         messages: { type: Boolean, default: true },
+        suggestions: { type: Boolean, default: true },
+      },
+      emailNotifications: {
+        likes: { type: Boolean, default: true },
+        comments: { type: Boolean, default: true },
+        mentions: { type: Boolean, default: true },
+        follows: { type: Boolean, default: true },
+        messages: { type: Boolean, default: true },
+        suggestions: { type: Boolean, default: false },
       },
     },
   },

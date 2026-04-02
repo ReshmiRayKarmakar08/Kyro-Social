@@ -49,6 +49,7 @@ const createPostSchema = Joi.object({
 
 const addCommentSchema = Joi.object({
   text: Joi.string().trim().min(1).max(500).required(),
+  parentCommentId: Joi.string().trim().optional().allow(null, ''),
 });
 
 const updateProfileSchema = Joi.object({
@@ -86,8 +87,18 @@ const updateSettingsSchema = Joi.object({
   notifications: Joi.object({
     likes: Joi.boolean(),
     comments: Joi.boolean(),
+    mentions: Joi.boolean(),
     follows: Joi.boolean(),
     messages: Joi.boolean(),
+    suggestions: Joi.boolean(),
+  }),
+  emailNotifications: Joi.object({
+    likes: Joi.boolean(),
+    comments: Joi.boolean(),
+    mentions: Joi.boolean(),
+    follows: Joi.boolean(),
+    messages: Joi.boolean(),
+    suggestions: Joi.boolean(),
   }),
 });
 

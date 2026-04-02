@@ -14,12 +14,22 @@ const commentSchema = new mongoose.Schema(
       trim: true,
       maxlength: 500,
     },
+    parentCommentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+    },
+    mentionUsernames: [
+      {
+        type: String,
+        trim: true,
+        lowercase: true,
+      },
+    ],
     timestamp: {
       type: Date,
       default: Date.now,
     },
-  },
-  { _id: false }
+  }
 );
 
 const postSchema = new mongoose.Schema(

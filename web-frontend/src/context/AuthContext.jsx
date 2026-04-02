@@ -1,13 +1,35 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 import { io } from 'socket.io-client';
+import { getSocketOptions, getSocketUrl } from '../utils/socket';
 
 const AuthContext = createContext(null);
 
+const authFallback = {
+  user: null,
+  token: null,
+  loading: false,
+  isAuthenticated: false,
+  isPendingVerification: false,
+  signup: async () => ({ message: 'Auth provider unavailable' }),
+  login: async () => ({ message: 'Auth provider unavailable' }),
+  guestLogin: async () => ({ message: 'Auth provider unavailable' }),
+  googleLogin: async () => ({ message: 'Auth provider unavailable' }),
+  verifyOTP: async () => ({ message: 'Auth provider unavailable' }),
+  resendOTP: async () => ({ message: 'Auth provider unavailable' }),
+  forgotPassword: async () => ({ message: 'Auth provider unavailable' }),
+  resetPassword: async () => ({ message: 'Auth provider unavailable' }),
+  logout: () => {},
+  updateUser: () => {},
+  notifications: [],
+  unreadNotifications: 0,
+  fetchNotifications: async () => {},
+  markNotificationsRead: async () => {},
+};
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within AuthProvider');
-  return context;
+  return context || authFallback;
 };
 
 export const AuthProvider = ({ children }) => {
@@ -133,19 +155,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (!user?.username) return undefined;
-
-    const apiBase = import.meta.env.VITE_API_URL || '/api';
-    let socketUrl = import.meta.env.VITE_SOCKET_URL;
-    if (!socketUrl) {
-      socketUrl = apiBase.startsWith('http')
-        ? apiBase.replace(/\/api\/?$/, '')
-        : 'http://localhost:5001';
-    }
-
-    const socket = io(socketUrl, {
-      transports: ['websocket', 'polling'],
-      query: { username: user.username },
-    });
+    const socket = io(getSocketUrl(), getSocketOptions(user.username));
 
     socket.on('notification:new', (payload) => {
       setUnreadNotifications((prev) => (

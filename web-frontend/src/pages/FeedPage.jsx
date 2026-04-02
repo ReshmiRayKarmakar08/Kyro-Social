@@ -7,6 +7,7 @@ import CreatePost from '../components/feed/CreatePost';
 import PostCard from '../components/feed/PostCard';
 import FeedSkeleton from '../components/feed/FeedSkeleton';
 import { useAuth } from '../context/AuthContext';
+import { getSocketOptions, getSocketUrl } from '../utils/socket';
 
 const PAGE_LIMIT = 10;
 
@@ -21,6 +22,22 @@ const FeedPage = () => {
 
   const [alert, setAlert] = useState({ open: false, message: '', severity: 'info' });
   const [filterType, setFilterType] = useState('all');
+
+  const stripDeletedComments = (comments = [], commentId) => {
+    const toDelete = new Set([String(commentId)]);
+    let changed = true;
+    while (changed) {
+      changed = false;
+      comments.forEach((item) => {
+        const parentId = item.parentCommentId ? String(item.parentCommentId) : null;
+        if (parentId && toDelete.has(parentId) && !toDelete.has(String(item._id))) {
+          toDelete.add(String(item._id));
+          changed = true;
+        }
+      });
+    }
+    return comments.filter((item) => !toDelete.has(String(item._id)));
+  };
 
   const showAlert = (message, severity = 'error') => setAlert({ open: true, message, severity });
 
@@ -72,18 +89,7 @@ const FeedPage = () => {
   }, [hasMore, loadingMore, loading, fetchPosts, activeTab]);
 
   useEffect(() => {
-    const apiBase = import.meta.env.VITE_API_URL || '/api';
-    let socketUrl = import.meta.env.VITE_SOCKET_URL;
-    if (!socketUrl) {
-      socketUrl = apiBase.startsWith('http')
-        ? apiBase.replace(/\/api\/?$/, '')
-        : 'http://localhost:5001';
-    }
-
-    const socket = io(socketUrl, {
-      transports: ['websocket', 'polling'],
-      query: { username: user?.username || '' },
-    });
+    const socket = io(getSocketUrl(), getSocketOptions(user?.username || ''));
 
     socket.on('post:liked', ({ postId, likeCount }) => {
       setPosts((prev) => prev.map((p) => (
@@ -94,7 +100,26 @@ const FeedPage = () => {
     socket.on('post:commented', ({ postId, commentCount, comment }) => {
       setPosts((prev) => prev.map((p) => (
         p._id === postId
-          ? { ...p, commentCount, comments: [...(p.comments || []), comment] }
+          ? {
+            ...p,
+            commentCount,
+            comments: (p.comments || []).some((item) => String(item._id) === String(comment?._id))
+              ? (p.comments || [])
+              : [...(p.comments || []), comment],
+          }
+          : p
+      )));
+    });
+
+    socket.on('post:commentDeleted', ({ postId, deletedCommentIds, commentCount }) => {
+      const deleteSet = new Set((deletedCommentIds || []).map((id) => String(id)));
+      setPosts((prev) => prev.map((p) => (
+        p._id === postId
+          ? {
+            ...p,
+            commentCount: typeof commentCount === 'number' ? commentCount : Math.max(0, (p.commentCount || 0) - 1),
+            comments: (p.comments || []).filter((item) => !deleteSet.has(String(item._id))),
+          }
           : p
       )));
     });
@@ -138,7 +163,7 @@ const FeedPage = () => {
     }
   };
 
-  const handleComment = async (postId, text) => {
+  const handleComment = async (postId, text, parentCommentId = null) => {
     const message = text.trim();
     if (!message) {
       showAlert('Comment cannot be empty.', 'warning');
@@ -153,6 +178,8 @@ const FeedPage = () => {
       userName: currentUser?.name || 'You',
       userAvatar: currentUser?.profilePicture,
       text: message,
+      parentCommentId: parentCommentId || null,
+      mentionUsernames: [],
       createdAt: new Date().toISOString(),
     };
 
@@ -166,7 +193,22 @@ const FeedPage = () => {
     }));
 
     try {
-      await api.post(`/posts/${postId}/comment`, { text: message });
+      const res = await api.post(`/posts/${postId}/comment`, {
+        text: message,
+        parentCommentId: parentCommentId || undefined,
+      });
+      const savedComment = res.data?.comment;
+      if (savedComment) {
+        setPosts((prev) => prev.map((post) => {
+          if (post._id !== postId) return post;
+          return {
+            ...post,
+            comments: (post.comments || []).map((item) => (
+              item._id === optimisticComment._id ? { ...item, ...savedComment } : item
+            )),
+          };
+        }));
+      }
     } catch {
       fetchPosts(1, activeTab);
       showAlert('Failed to add comment. Please try again.');
@@ -180,6 +222,43 @@ const FeedPage = () => {
       showAlert('Post deleted successfully!', 'success');
     } catch (err) {
       showAlert(err.response?.data?.message || 'Failed to delete post. Please try again.');
+    }
+  };
+
+  const handleToggleSave = async (postId) => {
+    setPosts((prev) => prev.map((post) => (
+      post._id === postId ? { ...post, isSaved: !post.isSaved } : post
+    )));
+
+    try {
+      const res = await api.put(`/posts/${postId}/save`);
+      const saved = Boolean(res.data?.saved);
+      setPosts((prev) => prev.map((post) => (
+        post._id === postId ? { ...post, isSaved: saved } : post
+      )));
+      showAlert(saved ? 'Post saved' : 'Removed from saved posts', 'success');
+    } catch {
+      fetchPosts(1, activeTab);
+      showAlert('Failed to update saved post');
+    }
+  };
+
+  const handleDeleteComment = async (postId, commentId) => {
+    setPosts((prev) => prev.map((post) => {
+      if (post._id !== postId) return post;
+      const nextComments = stripDeletedComments(post.comments || [], commentId);
+      return {
+        ...post,
+        comments: nextComments,
+        commentCount: nextComments.length,
+      };
+    }));
+
+    try {
+      await api.delete(`/posts/${postId}/comment/${commentId}`);
+    } catch {
+      fetchPosts(1, activeTab);
+      showAlert('Failed to delete comment');
     }
   };
 
@@ -243,7 +322,16 @@ const FeedPage = () => {
       ) : (
         <Box>
           {posts.map((post, index) => (
-            <PostCard key={post._id} post={post} onLike={handleLike} onComment={handleComment} onDelete={handleDeletePost} index={index} />
+            <PostCard
+              key={post._id}
+              post={post}
+              onLike={handleLike}
+              onComment={handleComment}
+              onDeleteComment={handleDeleteComment}
+              onDelete={handleDeletePost}
+              onSave={handleToggleSave}
+              index={index}
+            />
           ))}
         </Box>
       )}
