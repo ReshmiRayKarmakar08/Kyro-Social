@@ -1,24 +1,29 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-const auth = async (req, res, next) => {
-  try {
-    const authHeader = req.headers.authorization;
+const extractToken = (req) => {
+  const authHeader = req.headers.authorization || '';
+  if (!authHeader.startsWith('Bearer ')) return null;
+  return authHeader.split(' ')[1];
+};
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: 'Access denied. No token provided.' });
+const protect = async (req, res, next) => {
+  try {
+    const token = extractToken(req);
+
+    if (!token) {
+      return res.status(401).json({ message: 'Not authorized: token missing' });
     }
 
-    const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id).select('-password -otp -otpExpiry');
 
-    const user = await User.findById(decoded.id).select('-password -otp -otpExpiry -resetToken -resetTokenExpiry -loginHistory');
     if (!user) {
-      return res.status(401).json({ message: 'User not found. Token invalid.' });
+      return res.status(401).json({ message: 'Not authorized: user not found' });
     }
 
     req.user = user;
-    next();
+    return next();
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ message: 'Token expired. Please login again.' });
@@ -26,24 +31,28 @@ const auth = async (req, res, next) => {
     if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({ message: 'Invalid token.' });
     }
-    res.status(500).json({ message: 'Authentication error.' });
+    return next(error);
   }
 };
 
-// Optional auth: sets req.user if token exists, but doesn't block
-const optionalAuth = async (req, res, next) => {
+const optionalProtect = async (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id).select('-password -otp -otpExpiry -resetToken -resetTokenExpiry -loginHistory');
-      if (user) req.user = user;
-    }
-  } catch (err) {
-    // Silently continue without auth
+    const token = extractToken(req);
+    if (!token) return next();
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id).select('-password -otp -otpExpiry');
+    if (user) req.user = user;
+
+    return next();
+  } catch (error) {
+    return next();
   }
-  next();
 };
 
-module.exports = { auth, optionalAuth };
+module.exports = {
+  protect,
+  optionalProtect,
+  auth: protect,
+  optionalAuth: optionalProtect,
+};

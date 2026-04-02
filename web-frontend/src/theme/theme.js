@@ -1,8 +1,6 @@
-import { createTheme } from '@mui/material/styles';
-
-const theme = createTheme({
+export const getThemeConfig = (mode) => ({
   palette: {
-    mode: 'light',
+    mode,
     primary: {
       main: '#FF6154',
       light: '#FF8A80',
@@ -10,18 +8,18 @@ const theme = createTheme({
       contrastText: '#FFFFFF',
     },
     secondary: {
-      main: '#2D3142',
+      main: mode === 'light' ? '#2D3142' : '#94A3B8',
       light: '#4F5D75',
       dark: '#1B1F2E',
       contrastText: '#FFFFFF',
     },
     background: {
-      default: '#F5F5F7',
-      paper: '#FFFFFF',
+      default: mode === 'light' ? '#F5F5F7' : '#0F172A',
+      paper: mode === 'light' ? '#FFFFFF' : '#1E293B',
     },
     text: {
-      primary: '#1A1A2E',
-      secondary: '#6B7280',
+      primary: mode === 'light' ? '#1A1A2E' : '#F1F5F9',
+      secondary: mode === 'light' ? '#6B7280' : '#94A3B8',
     },
     success: {
       main: '#10B981',
@@ -32,7 +30,7 @@ const theme = createTheme({
     error: {
       main: '#EF4444',
     },
-    divider: 'rgba(0, 0, 0, 0.06)',
+    divider: mode === 'light' ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.1)',
   },
   shape: {
     borderRadius: 16,
@@ -80,13 +78,13 @@ const theme = createTheme({
     },
     caption: {
       fontSize: '0.75rem',
-      color: '#9CA3AF',
+      color: mode === 'light' ? '#9CA3AF' : '#64748B',
     },
   },
   components: {
     MuiButton: {
       defaultProps: {
-        disableElevation: true, // Remove standard shadows
+        disableElevation: true,
       },
       styleOverrides: {
         root: {
@@ -115,11 +113,11 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 24,
-          boxShadow: '0 20px 40px rgba(45, 49, 66, 0.06)',
-          border: 'none',
+          boxShadow: mode === 'light' ? '0 20px 40px rgba(45, 49, 66, 0.06)' : '0 20px 40px rgba(0, 0, 0, 0.25)',
+          border: mode === 'light' ? 'none' : '1px solid rgba(255, 255, 255, 0.05)',
           transition: 'box-shadow 0.2s ease, transform 0.2s ease',
           '&:hover': {
-            boxShadow: '0 25px 50px rgba(45, 49, 66, 0.1)',
+            boxShadow: mode === 'light' ? '0 25px 50px rgba(45, 49, 66, 0.1)' : '0 25px 50px rgba(0, 0, 0, 0.3)',
           },
         },
       },
@@ -129,7 +127,7 @@ const theme = createTheme({
         root: {
           '& .MuiOutlinedInput-root': {
             borderRadius: 16,
-            backgroundColor: '#F3F4F6',
+            backgroundColor: mode === 'light' ? '#F3F4F6' : '#334155',
             '& fieldset': {
               border: 'none',
             },
@@ -146,7 +144,7 @@ const theme = createTheme({
     MuiAvatar: {
       styleOverrides: {
         root: {
-          border: '2px solid #FFFFFF',
+          border: mode === 'light' ? '2px solid #FFFFFF' : '2px solid #1E293B',
           boxShadow: '0 4px 14px rgba(0,0,0,0.06)',
         },
       },
@@ -156,6 +154,8 @@ const theme = createTheme({
         root: {
           borderRadius: 50,
           fontWeight: 600,
+          backgroundColor: mode === 'light' ? undefined : '#334155',
+          color: mode === 'light' ? undefined : '#F1F5F9',
         },
       },
     },
@@ -180,18 +180,18 @@ const theme = createTheme({
     MuiTabs: {
       styleOverrides: {
         indicator: {
-          display: 'none', // We are using pill backgrounds instead of underline
+          display: 'none',
         },
       },
     },
     MuiBottomNavigation: {
       styleOverrides: {
         root: {
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          backgroundColor: mode === 'light' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(30, 41, 59, 0.8)',
           backdropFilter: 'blur(24px)',
           borderRadius: 50,
           height: 70,
-          boxShadow: '0 -10px 30px rgba(45,49,66,0.05)',
+          boxShadow: mode === 'light' ? '0 -10px 30px rgba(45,49,66,0.05)' : '0 -10px 30px rgba(0,0,0,0.2)',
         },
       },
     },
@@ -199,10 +199,13 @@ const theme = createTheme({
       styleOverrides: {
         paper: {
           borderRadius: '24px 24px 0 0',
+          backgroundColor: mode === 'light' ? '#FFFFFF' : '#1E293B',
         },
       },
     },
   },
 });
 
+import { createTheme } from '@mui/material/styles';
+const theme = createTheme(getThemeConfig('light'));
 export default theme;

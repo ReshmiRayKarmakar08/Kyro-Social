@@ -11,12 +11,28 @@ import {
   Skeleton,
   Alert,
   Snackbar,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Stack,
+  Chip,
+  List,
+  ListItemButton,
+  ListItemAvatar,
+  ListItemText,
+  CircularProgress,
 } from '@mui/material';
 import {
   CalendarTodayRounded,
   EditRounded,
   CameraAltRounded,
   LinkRounded,
+  LocationOnRounded,
+  FavoriteRounded,
+  ChatBubbleRounded,
+  PhotoCameraRounded,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,16 +42,15 @@ import FeedSkeleton from '../components/feed/FeedSkeleton';
 import { useAuth } from '../context/AuthContext';
 import { formatJoinedDate } from '../utils/formatDate';
 import logo from '../assets/logo.png';
-import { mockPosts, mockUsers } from '../data/mockData';
 
 const ProfileSkeleton = () => (
-  <Card sx={{ mb: 2, overflow: 'visible' }}>
-    <Skeleton variant="rectangular" height={200} sx={{ borderRadius: '20px 20px 0 0' }} animation="wave" />
+  <Card sx={{ mb: 2, overflow: 'visible', borderRadius: 2, bgcolor: 'background.paper', border: (theme) => `1px solid ${theme.palette.divider}` }}>
+    <Skeleton variant="rectangular" height={220} animation="wave" />
     <Box sx={{ px: 3, pb: 3, pt: 0, position: 'relative' }}>
-      <Skeleton variant="circular" width={100} height={100} sx={{ mt: -6, border: '4px solid #fff' }} animation="wave" />
-      <Skeleton variant="text" width="50%" height={32} sx={{ mt: 1.5 }} animation="wave" />
-      <Skeleton variant="text" width="30%" height={20} animation="wave" />
-      <Skeleton variant="text" width="80%" height={18} sx={{ mt: 1 }} animation="wave" />
+      <Skeleton variant="circular" width={110} height={110} sx={{ mt: -7, border: (theme) => `4px solid ${theme.palette.background.paper}` }} animation="wave" />
+      <Skeleton variant="text" width="45%" height={32} sx={{ mt: 1.5 }} animation="wave" />
+      <Skeleton variant="text" width="28%" height={20} animation="wave" />
+      <Skeleton variant="text" width="75%" height={18} sx={{ mt: 1 }} animation="wave" />
       <Box sx={{ display: 'flex', gap: 3, mt: 2 }}>
         <Skeleton variant="text" width={80} height={20} animation="wave" />
         <Skeleton variant="text" width={80} height={20} animation="wave" />
@@ -51,137 +66,215 @@ const ProfilePage = () => {
   const navigate = useNavigate();
 
   const [profile, setProfile] = useState(null);
+  const [stats, setStats] = useState({ postsCount: 0, likesReceived: 0, commentsReceived: 0 });
   const [posts, setPosts] = useState([]);
   const [activeTab, setActiveTab] = useState('posts');
   const [loading, setLoading] = useState(true);
   const [postsLoading, setPostsLoading] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
-  const [usingMock, setUsingMock] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [listOpen, setListOpen] = useState(false);
+  const [listTitle, setListTitle] = useState('Followers');
+  const [listData, setListData] = useState([]);
+  const [listLoading, setListLoading] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [form, setForm] = useState({
+    name: '',
+    username: '',
+    headline: '',
+    bio: '',
+    website: '',
+    location: '',
+  });
+  const [profilePictureFile, setProfilePictureFile] = useState(null);
+  const [coverPhotoFile, setCoverPhotoFile] = useState(null);
   const [alert, setAlert] = useState({ open: false, message: '', severity: 'info' });
+
   const isOwnProfile = currentUser?.username === username;
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchProfileData = async () => {
       setLoading(true);
       try {
         const [profileRes, postsRes] = await Promise.all([
           api.get(`/users/${username}`),
           api.get(`/posts/user/${username}?type=posts`),
         ]);
+
         setProfile(profileRes.data.user);
-        setPosts(postsRes.data.posts);
-        setIsFollowing(profileRes.data.user.followers?.includes(currentUser?.username));
-        setUsingMock(false);
+        setStats(profileRes.data.stats || { postsCount: 0, likesReceived: 0, commentsReceived: 0 });
+        setPosts(postsRes.data.posts || []);
+        setIsFollowing((profileRes.data.user.followers || []).includes(currentUser?.username));
+        setForm({
+          name: profileRes.data.user.name || '',
+          username: profileRes.data.user.username || '',
+          headline: profileRes.data.user.headline || '',
+          bio: profileRes.data.user.bio || '',
+          website: profileRes.data.user.website || '',
+          location: profileRes.data.user.location || '',
+        });
       } catch (err) {
-        console.error('Profile fetch error:', err);
-        // Fallback to mock data
-        const mockUser = mockUsers.find((u) => u.username === username) || mockUsers[0];
-        const mockUserPosts = mockPosts.filter((p) => p.authorUsername === username || p.authorUsername === mockUser.username);
-        setProfile(mockUser);
-        setPosts(mockUserPosts.length > 0 ? mockUserPosts : mockPosts.slice(0, 2));
-        setUsingMock(true);
+        setProfile(null);
       } finally {
         setLoading(false);
       }
     };
-    fetchProfile();
+
+    fetchProfileData();
   }, [username, currentUser?.username]);
 
   const handleTabChange = async (_, value) => {
     setActiveTab(value);
-    if (usingMock) return;
     setPostsLoading(true);
     try {
       const res = await api.get(`/posts/user/${username}?type=${value}`);
-      setPosts(res.data.posts);
-    } catch (err) {
-      console.error('Tab fetch error:', err);
+      setPosts(res.data.posts || []);
+    } catch {
+      setPosts([]);
     } finally {
       setPostsLoading(false);
     }
   };
 
   const handleFollow = async () => {
-    setIsFollowing(!isFollowing);
-    setProfile((prev) => ({
-      ...prev,
-      followers: isFollowing
-        ? (prev.followers || []).filter((u) => u !== currentUser?.username)
-        : [...(prev.followers || []), currentUser?.username],
-    }));
-
-    if (usingMock) return;
+    setIsFollowing((prev) => !prev);
+    setProfile((prev) => {
+      if (!prev) return prev;
+      const followers = prev.followers || [];
+      const updatedFollowers = isFollowing
+        ? followers.filter((u) => u !== currentUser?.username)
+        : [...followers, currentUser?.username];
+      return { ...prev, followers: updatedFollowers };
+    });
 
     try {
       const res = await api.put(`/users/follow/${username}`);
       setIsFollowing(res.data.isFollowing);
-    } catch (err) {
-      // Revert
-      setIsFollowing(isFollowing);
+    } catch {
+      setIsFollowing((prev) => !prev);
       setAlert({ open: true, message: 'Failed to update follow status.', severity: 'error' });
     }
   };
 
+  const openUserList = async (mode) => {
+    setListOpen(true);
+    setListTitle(mode === 'followers' ? 'Followers' : 'Following');
+    setListLoading(true);
+    try {
+      const res = await api.get(`/users/${username}/${mode}`);
+      setListData(res.data.users || []);
+    } catch {
+      setListData([]);
+    } finally {
+      setListLoading(false);
+    }
+  };
+
+  const handleEditProfile = async () => {
+    setSavingProfile(true);
+    try {
+      const payload = new FormData();
+      payload.append('name', form.name.trim());
+      payload.append('username', form.username.trim().toLowerCase());
+      payload.append('headline', form.headline.trim());
+      payload.append('bio', form.bio.trim());
+      payload.append('website', form.website.trim());
+      payload.append('location', form.location.trim());
+      if (profilePictureFile) payload.append('profilePicture', profilePictureFile);
+      if (coverPhotoFile) payload.append('coverPhoto', coverPhotoFile);
+
+      const res = await api.put('/users/profile', payload, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      const updatedUser = res.data.user;
+      setProfile((prev) => ({ ...prev, ...updatedUser }));
+      if (currentUser?.id === updatedUser.id) {
+        updateUser(updatedUser);
+      }
+
+      setEditOpen(false);
+      setProfilePictureFile(null);
+      setCoverPhotoFile(null);
+      setAlert({ open: true, message: 'Profile updated successfully.', severity: 'success' });
+      if (updatedUser.username !== username) {
+        navigate(`/profile/${updatedUser.username}`, { replace: true });
+      }
+    } catch (err) {
+      setAlert({
+        open: true,
+        message: err.response?.data?.message || 'Failed to update profile.',
+        severity: 'error',
+      });
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
   const handleLike = async (postId) => {
-    setPosts((prev) =>
-      prev.map((post) => {
-        if (post._id !== postId) return post;
-        const alreadyLiked = post.likes?.some((l) => l.username === currentUser?.username);
-        return {
-          ...post,
-          likeCount: alreadyLiked ? post.likeCount - 1 : post.likeCount + 1,
-          likes: alreadyLiked
-            ? post.likes.filter((l) => l.username !== currentUser?.username)
-            : [...(post.likes || []), { username: currentUser?.username, userId: currentUser?.id }],
-        };
-      })
-    );
-    if (usingMock) return;
+    setPosts((prev) => prev.map((post) => {
+      if (post._id !== postId) return post;
+      const alreadyLiked = (post.likes || []).some((l) => l.username === currentUser?.username);
+      return {
+        ...post,
+        likeCount: alreadyLiked ? Math.max(0, (post.likeCount || 0) - 1) : (post.likeCount || 0) + 1,
+        likes: alreadyLiked
+          ? (post.likes || []).filter((l) => l.username !== currentUser?.username)
+          : [...(post.likes || []), { username: currentUser?.username, userId: currentUser?.id }],
+      };
+    }));
+
     try {
       await api.put(`/posts/${postId}/like`);
-    } catch (err) {
-      console.error(err);
+    } catch {
+      const res = await api.get(`/posts/user/${username}?type=${activeTab}`);
+      setPosts(res.data.posts || []);
     }
   };
 
   const handleComment = async (postId, text) => {
-    const tempComment = {
-      _id: Date.now().toString(),
-      userId: currentUser?.id,
+    const optimisticComment = {
+      _id: `temp-${Date.now()}`,
       username: currentUser?.username || 'you',
-      userName: currentUser?.name || 'You',
-      userAvatar: currentUser?.profilePicture,
       text,
       createdAt: new Date().toISOString(),
     };
 
-    setPosts((prev) =>
-      prev.map((post) =>
-        post._id === postId
-          ? {
-              ...post,
-              comments: [...(post.comments || []), tempComment],
-              commentCount: (post.commentCount || 0) + 1,
-            }
-          : post
-      )
-    );
+    setPosts((prev) => prev.map((post) => (
+      post._id === postId
+        ? { ...post, comments: [...(post.comments || []), optimisticComment], commentCount: (post.commentCount || 0) + 1 }
+        : post
+    )));
 
-    if (usingMock) return;
     try {
       await api.post(`/posts/${postId}/comment`, { text });
+    } catch {
+      const res = await api.get(`/posts/user/${username}?type=${activeTab}`);
+      setPosts(res.data.posts || []);
+    }
+  };
+
+  const handleDeletePost = async (postId) => {
+    try {
+      await api.delete(`/posts/${postId}`);
+      setPosts((prev) => prev.filter((p) => p._id !== postId));
+      setStats((prev) => ({
+        ...prev,
+        postsCount: Math.max(0, (prev.postsCount || 0) - 1),
+      }));
+      setAlert({ open: true, message: 'Post deleted successfully.', severity: 'success' });
     } catch (err) {
-      console.error(err);
+      setAlert({
+        open: true,
+        message: err.response?.data?.message || 'Failed to delete post.',
+        severity: 'error',
+      });
     }
   };
 
   if (loading) {
     return (
-      <Box
-        component={motion.div}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-      >
+      <Box component={motion.div} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <ProfileSkeleton />
         <FeedSkeleton count={2} />
       </Box>
@@ -192,11 +285,7 @@ const ProfilePage = () => {
     return (
       <Box sx={{ textAlign: 'center', py: 10 }}>
         <Typography variant="h5" fontWeight={700}>User not found</Typography>
-        <Button
-          variant="contained"
-          onClick={() => navigate('/')}
-          sx={{ mt: 2, borderRadius: 50 }}
-        >
+        <Button variant="contained" onClick={() => navigate('/')} sx={{ mt: 2, borderRadius: 50 }}>
           Go Home
         </Button>
       </Box>
@@ -205,60 +294,26 @@ const ProfilePage = () => {
 
   return (
     <Box>
-      {/* Cover Photo */}
-      <Card
-        component={motion.div}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        sx={{ mb: 2, overflow: 'visible', position: 'relative' }}
-      >
+      <Card component={motion.div} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} sx={{ mb: 2, overflow: 'hidden', borderRadius: 2, bgcolor: 'background.paper', border: (theme) => `1px solid ${theme.palette.divider}` }}>
         <Box
           sx={{
-            height: { xs: 160, sm: 210 },
+            height: { xs: 170, sm: 230 },
             background: profile.coverPhoto
               ? `url(${profile.coverPhoto}) center/cover`
-              : 'linear-gradient(135deg, #FF6154 0%, #FF8A65 40%, #FFD4C8 100%)',
-            borderRadius: '20px 20px 0 0',
+              : 'linear-gradient(135deg, #FF6154 0%, #FF9B7A 50%, #FFD7CC 100%)',
             position: 'relative',
           }}
-        >
-          {isOwnProfile && (
-            <IconButton
-              component={motion.button}
-              whileTap={{ scale: 0.9 }}
-              sx={{
-                position: 'absolute',
-                bottom: 12,
-                right: 12,
-                backgroundColor: 'rgba(0,0,0,0.45)',
-                color: '#fff',
-                backdropFilter: 'blur(8px)',
-                '&:hover': { backgroundColor: 'rgba(0,0,0,0.65)' },
-              }}
-              size="small"
-            >
-              <CameraAltRounded fontSize="small" />
-            </IconButton>
-          )}
-        </Box>
+        />
 
-        {/* Profile Info */}
-        <Box sx={{ px: 3, pb: 3, pt: 0, position: 'relative' }}>
-          {/* Avatar - overlapping cover */}
+        <Box sx={{ px: 3, pb: 3, position: 'relative' }}>
           <Avatar
             src={profile.profilePicture || logo}
-            component={motion.div}
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2, type: 'spring' }}
             sx={{
-              width: 100,
-              height: 100,
-              border: '4px solid #fff',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
-              position: 'relative',
-              mt: -6,
+              width: 110,
+              height: 110,
+              mt: -6.5,
+              border: (theme) => `4px solid ${theme.palette.background.paper}`,
+              boxShadow: '0 8px 24px rgba(0,0,0,0.16)',
               bgcolor: '#FF6154',
               fontSize: '2rem',
               fontWeight: 700,
@@ -267,22 +322,14 @@ const ProfilePage = () => {
             {profile.name?.charAt(0)}
           </Avatar>
 
-          {/* Action Buttons */}
           <Box sx={{ position: 'absolute', top: 16, right: 16, display: 'flex', gap: 1 }}>
             {isOwnProfile ? (
               <Button
                 variant="outlined"
                 size="small"
                 startIcon={<EditRounded />}
-                component={motion.button}
-                whileTap={{ scale: 0.95 }}
-                sx={{
-                  borderRadius: 50,
-                  borderColor: 'rgba(0,0,0,0.15)',
-                  color: '#374151',
-                  fontWeight: 600,
-                  textTransform: 'none',
-                }}
+                onClick={() => setEditOpen(true)}
+                sx={{ borderRadius: 50, textTransform: 'none', fontWeight: 700 }}
               >
                 Edit Profile
               </Button>
@@ -291,162 +338,223 @@ const ProfilePage = () => {
                 variant={isFollowing ? 'outlined' : 'contained'}
                 size="small"
                 onClick={handleFollow}
-                component={motion.button}
-                whileTap={{ scale: 0.95 }}
-                sx={{
-                  borderRadius: 50,
-                  fontWeight: 700,
-                  px: 3,
-                  ...(isFollowing && {
-                    borderColor: 'rgba(0,0,0,0.15)',
-                    color: '#6B7280',
-                    '&:hover': { borderColor: '#EF4444', color: '#EF4444', background: 'rgba(239,68,68,0.04)' },
-                  }),
-                }}
+                sx={{ borderRadius: 50, textTransform: 'none', fontWeight: 700, px: 2.5 }}
               >
                 {isFollowing ? 'Following' : 'Follow'}
               </Button>
             )}
           </Box>
 
-          {/* Name & Username */}
-          <Typography variant="h5" fontWeight={800} sx={{ mt: 1.5, color: '#1A1A2E' }}>
-            {profile.name}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-            @{profile.username}
-          </Typography>
+          <Typography variant="h5" fontWeight={800} sx={{ mt: 1.5, color: 'text.primary' }}>{profile.name}</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>@{profile.username}</Typography>
+          {!!profile.headline && <Typography variant="body2" sx={{ color: 'text.primary', mb: 1 }}>{profile.headline}</Typography>}
 
-          {/* Bio */}
-          {profile.bio && (
-            <Typography variant="body1" sx={{ mb: 1.5, color: '#374151', lineHeight: 1.6 }}>
-              {profile.bio}
-            </Typography>
-          )}
+          {profile.bio && <Typography variant="body1" sx={{ mb: 1.5, color: 'text.primary', lineHeight: 1.6, opacity: 0.9 }}>{profile.bio}</Typography>}
 
-          {/* Website Link */}
           {profile.website && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
               <LinkRounded sx={{ fontSize: 16, color: '#FF6154' }} />
-              <Typography
-                variant="body2"
-                component="a"
-                href={profile.website}
-                target="_blank"
-                sx={{ color: '#FF6154', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
-              >
+              <Typography variant="body2" component="a" href={profile.website} target="_blank" sx={{ color: '#FF6154', fontWeight: 600, textDecoration: 'none' }}>
                 {profile.website.replace(/^https?:\/\//, '')}
               </Typography>
             </Box>
           )}
 
-          {/* Joined Date */}
+          {profile.location && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
+              <LocationOnRounded sx={{ fontSize: 16, color: '#9CA3AF' }} />
+              <Typography variant="body2" color="text.secondary">{profile.location}</Typography>
+            </Box>
+          )}
+
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 2 }}>
             <CalendarTodayRounded sx={{ fontSize: 16, color: '#9CA3AF' }} />
-            <Typography variant="caption" color="text.secondary">
-              {formatJoinedDate(profile.joinedDate || profile.createdAt)}
-            </Typography>
+            <Typography variant="caption" color="text.secondary">{formatJoinedDate(profile.joinedDate || profile.createdAt)}</Typography>
           </Box>
 
-          {/* Stats Row */}
-          <Box
-            component={motion.div}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            sx={{ display: 'flex', gap: 3 }}
-          >
-            <Box sx={{ cursor: 'pointer', '&:hover span': { color: '#FF6154' } }}>
-              <Typography component="span" variant="subtitle2" fontWeight={800}>
-                {profile.following?.length || 0}
-              </Typography>
-              <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 0.5 }}>
-                Following
-              </Typography>
-            </Box>
-            <Box sx={{ cursor: 'pointer', '&:hover span': { color: '#FF6154' } }}>
-              <Typography component="span" variant="subtitle2" fontWeight={800}>
-                {profile.followers?.length || 0}
-              </Typography>
-              <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 0.5 }}>
-                Followers
-              </Typography>
-            </Box>
-            <Box>
-              <Typography component="span" variant="subtitle2" fontWeight={800}>
-                {posts.length}
-              </Typography>
-              <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 0.5 }}>
-                Posts
-              </Typography>
-            </Box>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1.5 }}>
+            <Chip
+              label={`${profile.following?.length || 0} Following`}
+              onClick={() => openUserList('following')}
+              sx={{ fontWeight: 700 }}
+            />
+            <Chip
+              label={`${profile.followers?.length || 0} Followers`}
+              onClick={() => openUserList('followers')}
+              sx={{ fontWeight: 700 }}
+            />
+            <Chip label={`${stats.postsCount || 0} Posts`} sx={{ fontWeight: 700 }} />
+            <Chip icon={<FavoriteRounded fontSize="small" />} label={`${stats.likesReceived || 0} Likes`} sx={{ fontWeight: 700 }} />
+            <Chip icon={<ChatBubbleRounded fontSize="small" />} label={`${stats.commentsReceived || 0} Comments`} sx={{ fontWeight: 700 }} />
           </Box>
         </Box>
 
-        {/* Tabs */}
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
           variant="fullWidth"
-          TabIndicatorProps={{
-            sx: { backgroundColor: '#FF6154', height: 3, borderRadius: '3px 3px 0 0' },
-          }}
+          TabIndicatorProps={{ sx: { backgroundColor: '#FF6154', height: 3 } }}
           sx={{
-            borderTop: '1px solid rgba(0,0,0,0.06)',
+            borderTop: (theme) => `1px solid ${theme.palette.divider}`,
             '& .MuiTab-root': {
               textTransform: 'none',
-              fontWeight: 600,
-              color: '#9CA3AF',
-              transition: 'color 0.2s',
+              fontWeight: 700,
+              color: 'text.secondary',
               '&.Mui-selected': { color: '#FF6154' },
             },
           }}
         >
-          <Tab label="My Posts" value="posts" id="profile-tab-posts" />
-          <Tab label="Liked" value="liked" id="profile-tab-liked" />
-          <Tab label="Commented" value="commented" id="profile-tab-commented" />
+          <Tab label="My Posts" value="posts" />
+          <Tab label="Liked" value="liked" />
+          <Tab label="Commented" value="commented" />
         </Tabs>
       </Card>
 
-      {/* Posts */}
       {postsLoading ? (
         <FeedSkeleton count={2} />
       ) : (
         <AnimatePresence>
           {posts.length === 0 ? (
-            <Box
-              component={motion.div}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              sx={{ textAlign: 'center', py: 6 }}
-            >
-              <Typography color="text.secondary">No posts to show</Typography>
+            <Box component={motion.div} initial={{ opacity: 0 }} animate={{ opacity: 1 }} sx={{ textAlign: 'center', py: 6 }}>
+              <Typography color="text.secondary">No posts found. Be the first to share your journey!</Typography>
             </Box>
           ) : (
             posts.map((post, index) => (
-              <PostCard
-                key={post._id}
-                post={post}
-                onLike={handleLike}
-                onComment={handleComment}
-                index={index}
-              />
+              <PostCard key={post._id} post={post} onLike={handleLike} onComment={handleComment} onDelete={handleDeletePost} index={index} />
             ))
           )}
         </AnimatePresence>
       )}
 
-      {/* Snackbar */}
       <Snackbar
         open={alert.open}
         autoHideDuration={3000}
         onClose={() => setAlert((prev) => ({ ...prev, open: false }))}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert severity={alert.severity} variant="filled" sx={{ borderRadius: 3 }}>
-          {alert.message}
-        </Alert>
+        <Alert severity={alert.severity} variant="filled" sx={{ borderRadius: 3 }}>{alert.message}</Alert>
       </Snackbar>
+
+      <Dialog open={editOpen} onClose={() => setEditOpen(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Edit Profile</DialogTitle>
+        <DialogContent dividers>
+          <Stack spacing={2} sx={{ mt: 1 }}>
+            <TextField
+              label="Name"
+              value={form.name}
+              onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
+              fullWidth
+            />
+            <TextField
+              label="Username"
+              value={form.username}
+              onChange={(e) => setForm((prev) => ({ ...prev, username: e.target.value.toLowerCase() }))}
+              fullWidth
+            />
+            <TextField
+              label="Headline"
+              value={form.headline}
+              onChange={(e) => setForm((prev) => ({ ...prev, headline: e.target.value }))}
+              fullWidth
+            />
+            <TextField
+              label="Bio"
+              value={form.bio}
+              onChange={(e) => setForm((prev) => ({ ...prev, bio: e.target.value }))}
+              fullWidth
+              multiline
+              minRows={3}
+            />
+            <TextField
+              label="Website (https://...)"
+              value={form.website}
+              onChange={(e) => setForm((prev) => ({ ...prev, website: e.target.value }))}
+              fullWidth
+            />
+            <TextField
+              label="Location"
+              value={form.location}
+              onChange={(e) => setForm((prev) => ({ ...prev, location: e.target.value }))}
+              fullWidth
+            />
+
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+              <Button component="label" variant="outlined" startIcon={<PhotoCameraRounded />}>
+                Change Profile Photo
+                <input
+                  hidden
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setProfilePictureFile(e.target.files?.[0] || null)}
+                />
+              </Button>
+              <Button component="label" variant="outlined" startIcon={<PhotoCameraRounded />}>
+                Change Cover Photo
+                <input
+                  hidden
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setCoverPhotoFile(e.target.files?.[0] || null)}
+                />
+              </Button>
+            </Stack>
+
+            {(profilePictureFile || coverPhotoFile) && (
+              <Typography variant="caption" color="text.secondary">
+                {profilePictureFile ? `Profile: ${profilePictureFile.name}` : ''}
+                {profilePictureFile && coverPhotoFile ? ' | ' : ''}
+                {coverPhotoFile ? `Cover: ${coverPhotoFile.name}` : ''}
+              </Typography>
+            )}
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditOpen(false)}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={handleEditProfile}
+            disabled={savingProfile}
+          >
+            {savingProfile ? <CircularProgress size={18} color="inherit" /> : 'Save Changes'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={listOpen} onClose={() => setListOpen(false)} fullWidth maxWidth="xs">
+        <DialogTitle>{listTitle}</DialogTitle>
+        <DialogContent dividers sx={{ p: 0 }}>
+          {listLoading ? (
+            <Box sx={{ py: 3, display: 'flex', justifyContent: 'center' }}>
+              <CircularProgress size={24} />
+            </Box>
+          ) : listData.length === 0 ? (
+            <Box sx={{ p: 3, textAlign: 'center' }}>
+              <Typography variant="body2" color="text.secondary">No users found.</Typography>
+            </Box>
+          ) : (
+            <List disablePadding>
+              {listData.map((u) => (
+                <ListItemButton
+                  key={u.username}
+                  onClick={() => {
+                    setListOpen(false);
+                    navigate(`/profile/${u.username}`);
+                  }}
+                >
+                  <ListItemAvatar>
+                    <Avatar src={u.profilePicture || logo} />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={u.name}
+                    secondary={`@${u.username}${u.headline ? ` • ${u.headline}` : ''}`}
+                    primaryTypographyProps={{ fontWeight: 700 }}
+                  />
+                </ListItemButton>
+              ))}
+            </List>
+          )}
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };

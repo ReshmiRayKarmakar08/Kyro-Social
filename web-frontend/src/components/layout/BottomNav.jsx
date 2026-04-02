@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
-import { BottomNavigation, BottomNavigationAction, Paper, Badge } from '@mui/material';
+import { useMemo } from 'react';
+import { Box, BottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
 import {
   HomeRounded,
   SearchRounded,
-  AddCircleRounded,
   NotificationsNoneRounded,
   PersonOutlineRounded,
 } from '@mui/icons-material';
@@ -16,129 +15,107 @@ const BottomNav = () => {
   const location = useLocation();
   const { user } = useAuth();
 
-  const pathToValue = {
-    '/': 0,
-    '/search': 1,
-    '/notifications': 3,
-  };
+  const paths = useMemo(() => [
+    '/',
+    '/search',
+    '/notifications',
+    user?.username ? `/profile/${user.username}` : '/auth',
+  ], [user?.username]);
 
-  const [value, setValue] = useState(pathToValue[location.pathname] || 0);
-
-  useEffect(() => {
-    if (location.pathname.startsWith('/profile')) {
-      setValue(4);
-    } else {
-      setValue(pathToValue[location.pathname] ?? 0);
-    }
+  const value = useMemo(() => {
+    if (location.pathname.startsWith('/profile/')) return 3;
+    if (location.pathname.startsWith('/search') || location.pathname.startsWith('/explore')) return 1;
+    if (location.pathname.startsWith('/notifications')) return 2;
+    return 0;
   }, [location.pathname]);
 
   const handleChange = (e, newValue) => {
-    setValue(newValue);
-    const paths = ['/', '/search', null, '/notifications', `/profile/${user?.username}`];
-    if (paths[newValue]) {
-      navigate(paths[newValue]);
-    }
+    const target = paths[newValue] || '/';
+    navigate(target);
   };
 
   return (
-    <Paper
+    <Box
       sx={{
         position: 'fixed',
         bottom: 16,
-        left: 16,
-        right: 16,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: 'calc(100% - 32px)',
+        maxWidth: 420,
         display: { xs: 'block', md: 'none' },
-        zIndex: 1200,
-        borderRadius: '28px',
-        overflow: 'hidden',
-        background: 'rgba(255, 255, 255, 0.88)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        boxShadow: '0 8px 32px rgba(45, 49, 66, 0.1), 0 2px 8px rgba(0,0,0,0.04)',
-        border: '1px solid rgba(255,255,255,0.6)',
+        zIndex: 1205,
       }}
-      elevation={0}
     >
-      <BottomNavigation
-        value={value}
-        onChange={handleChange}
-        showLabels={false}
+      <Paper
+        elevation={0}
         sx={{
-          height: 64,
-          background: 'transparent',
-          '& .MuiBottomNavigationAction-root': {
-            color: '#9CA3AF',
-            minWidth: 'auto',
-            padding: '6px 0',
-            transition: 'color 0.2s',
-            '&.Mui-selected': {
-              color: '#FF6154',
-            },
-          },
+          borderRadius: '24px',
+          background: 'rgba(255, 255, 255, 0.75)',
+          backdropFilter: 'blur(28px)',
+          WebkitBackdropFilter: 'blur(28px)',
+          border: '1px solid rgba(0, 0, 0, 0.05)',
+          boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
+          overflow: 'hidden',
         }}
       >
-        <BottomNavigationAction
-          icon={
-            <motion.div whileTap={{ scale: 0.75 }}>
-              <HomeRounded sx={{ fontSize: 26 }} />
-            </motion.div>
-          }
-          id="nav-home"
-        />
-        <BottomNavigationAction
-          icon={
-            <motion.div whileTap={{ scale: 0.75 }}>
-              <SearchRounded sx={{ fontSize: 26 }} />
-            </motion.div>
-          }
-          id="nav-search"
-        />
-        {/* Center Create Button */}
-        <BottomNavigationAction
-          icon={
-            <motion.div
-              whileTap={{ scale: 0.8, rotate: 90 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-            >
-              <AddCircleRounded sx={{ fontSize: 40, color: '#FF6154' }} />
-            </motion.div>
-          }
+        <BottomNavigation
+          value={value}
+          onChange={handleChange}
+          showLabels={false}
           sx={{
-            '&.Mui-selected': { color: '#FF6154' },
+            height: 68,
+            background: 'transparent',
+            '& .MuiBottomNavigationAction-root': {
+              color: '#9CA3AF',
+              minWidth: 'auto',
+              flex: 1,
+              transition: 'all 0.3s ease',
+              '&.Mui-selected': {
+                color: '#FF6154',
+                '& .nav-icon-container': {
+                  background: 'rgba(255, 97, 84, 0.08)',
+                  borderRadius: '16px',
+                  transform: 'translateY(-2px)',
+                },
+              },
+            },
           }}
-          id="nav-create"
-          onClick={(e) => {
-            e.stopPropagation();
-            // Scroll to create post and focus
-            const createInput = document.getElementById('create-post-input');
-            if (createInput) {
-              createInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              setTimeout(() => createInput.focus(), 400);
-            } else {
-              navigate('/');
-            }
-          }}
-        />
-        <BottomNavigationAction
-          icon={
-            <motion.div whileTap={{ scale: 0.75 }}>
-              <Badge badgeContent={3} color="error" sx={{ '& .MuiBadge-badge': { fontSize: '0.6rem', minWidth: 16, height: 16 } }}>
-                <NotificationsNoneRounded sx={{ fontSize: 26 }} />
-              </Badge>
-            </motion.div>
-          }
-          id="nav-notifications"
-        />
-        <BottomNavigationAction
-          icon={
-            <motion.div whileTap={{ scale: 0.75 }}>
-              <PersonOutlineRounded sx={{ fontSize: 26 }} />
-            </motion.div>
-          }
-          id="nav-profile"
-        />
-      </BottomNavigation>
-    </Paper>
+        >
+          {[
+            { label: 'Home', icon: <HomeRounded />, id: 'nav-home' },
+            { label: 'Explore', icon: <SearchRounded />, id: 'nav-search' },
+            { label: 'Notifications', icon: <NotificationsNoneRounded />, id: 'nav-notifications' },
+            { label: 'Profile', icon: <PersonOutlineRounded />, id: 'nav-profile' },
+          ].map((item, i) => (
+            <BottomNavigationAction
+              key={item.id}
+              id={item.id}
+              icon={
+                <Box
+                  className="nav-icon-container"
+                  sx={{
+                    width: 44,
+                    height: 40,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  <motion.div
+                    whileTap={{ scale: 0.85, rotate: i % 2 === 0 ? 5 : -5 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+                  >
+                    {item.icon}
+                  </motion.div>
+                </Box>
+              }
+            />
+          ))}
+        </BottomNavigation>
+      </Paper>
+    </Box>
   );
 };
 

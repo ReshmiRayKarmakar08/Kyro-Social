@@ -1,0 +1,984 @@
+[2m5:58:13 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Desktop\Kyro-Social\web-frontend\src\components\feed\PostCard.jsx: 'import' and 'export' may only appear at the top level. (263:0)
+
+[0m [90m 261 |[31m }[33m;[31m
+ [90m 262 |[31m
+[31m[1m>[22m[31m[90m 263 |[31m [36mexport[31m [36mdefault[31m [33mPostCard[31m[33m;[31m
+ [90m     |[31m [31m[1m^[22m[31m
+ [90m 264 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Desktop/Kyro-Social/web-frontend/src/components/feed/PostCard.jsx[39m:263:0
+[33m  261|  };
+  262|  
+  263|  export default PostCard;
+     |  ^
+  264|  [39m
+      at constructor (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12871:18)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseStatementListItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseBlock (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+      at JSXParserMixin.parseFunctionBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12100:24)
+      at JSXParserMixin.parseArrowExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12075:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11687:12)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12421:16)
+      at JSXParserMixin.parseMaybeAssignAllowIn (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at JSXParserMixin.parseVar (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13384:91)
+      at JSXParserMixin.parseVarStatement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13230:10)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12851:23)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseModuleItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseProgram (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+      at JSXParserMixin.parseTopLevel (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+      at JSXParserMixin.parse (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+      at parse (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:261:32)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:223:11)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:189:28
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:113:33
+      at step (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:287:14)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:273:13
+[2m5:58:13 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Desktop\Kyro-Social\web-frontend\src\components\feed\PostCard.jsx: 'import' and 'export' may only appear at the top level. (263:0)
+
+[0m [90m 261 |[31m }[33m;[31m
+ [90m 262 |[31m
+[31m[1m>[22m[31m[90m 263 |[31m [36mexport[31m [36mdefault[31m [33mPostCard[31m[33m;[31m
+ [90m     |[31m [31m[1m^[22m[31m
+ [90m 264 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Desktop/Kyro-Social/web-frontend/src/components/feed/PostCard.jsx[39m:263:0
+[33m  261|  };
+  262|  
+  263|  export default PostCard;
+     |  ^
+  264|  [39m
+      at constructor (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12871:18)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseStatementListItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseBlock (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+      at JSXParserMixin.parseFunctionBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12100:24)
+      at JSXParserMixin.parseArrowExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12075:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11687:12)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12421:16)
+      at JSXParserMixin.parseMaybeAssignAllowIn (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at JSXParserMixin.parseVar (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13384:91)
+      at JSXParserMixin.parseVarStatement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13230:10)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12851:23)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseModuleItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseProgram (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+      at JSXParserMixin.parseTopLevel (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+      at JSXParserMixin.parse (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+      at parse (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:261:32)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:223:11)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:189:28
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:113:33
+      at step (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:287:14)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:273:13
+[2m5:58:13 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Desktop\Kyro-Social\web-frontend\src\components\feed\PostCard.jsx: 'import' and 'export' may only appear at the top level. (263:0)
+
+[0m [90m 261 |[31m }[33m;[31m
+ [90m 262 |[31m
+[31m[1m>[22m[31m[90m 263 |[31m [36mexport[31m [36mdefault[31m [33mPostCard[31m[33m;[31m
+ [90m     |[31m [31m[1m^[22m[31m
+ [90m 264 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Desktop/Kyro-Social/web-frontend/src/components/feed/PostCard.jsx[39m:263:0
+[33m  261|  };
+  262|  
+  263|  export default PostCard;
+     |  ^
+  264|  [39m
+      at constructor (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12871:18)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseStatementListItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseBlock (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+      at JSXParserMixin.parseFunctionBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12100:24)
+      at JSXParserMixin.parseArrowExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12075:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11687:12)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12421:16)
+      at JSXParserMixin.parseMaybeAssignAllowIn (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at JSXParserMixin.parseVar (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13384:91)
+      at JSXParserMixin.parseVarStatement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13230:10)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12851:23)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseModuleItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseProgram (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+      at JSXParserMixin.parseTopLevel (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+      at JSXParserMixin.parse (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+      at parse (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:261:32)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:223:11)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:189:28
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:113:33
+      at step (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:287:14)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:273:13
+[2m5:58:13 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Desktop\Kyro-Social\web-frontend\src\components\feed\PostCard.jsx: 'import' and 'export' may only appear at the top level. (263:0)
+
+[0m [90m 261 |[31m }[33m;[31m
+ [90m 262 |[31m
+[31m[1m>[22m[31m[90m 263 |[31m [36mexport[31m [36mdefault[31m [33mPostCard[31m[33m;[31m
+ [90m     |[31m [31m[1m^[22m[31m
+ [90m 264 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Desktop/Kyro-Social/web-frontend/src/components/feed/PostCard.jsx[39m:263:0
+[33m  261|  };
+  262|  
+  263|  export default PostCard;
+     |  ^
+  264|  [39m
+      at constructor (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12871:18)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseStatementListItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseBlock (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+      at JSXParserMixin.parseFunctionBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12100:24)
+      at JSXParserMixin.parseArrowExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12075:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11687:12)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12421:16)
+      at JSXParserMixin.parseMaybeAssignAllowIn (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at JSXParserMixin.parseVar (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13384:91)
+      at JSXParserMixin.parseVarStatement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13230:10)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12851:23)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseModuleItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseProgram (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+      at JSXParserMixin.parseTopLevel (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+      at JSXParserMixin.parse (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+      at parse (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:261:32)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:223:11)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:189:28
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:113:33
+      at step (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:287:14)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:273:13
+[2m5:58:13 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Desktop\Kyro-Social\web-frontend\src\components\feed\PostCard.jsx: 'import' and 'export' may only appear at the top level. (263:0)
+
+[0m [90m 261 |[31m }[33m;[31m
+ [90m 262 |[31m
+[31m[1m>[22m[31m[90m 263 |[31m [36mexport[31m [36mdefault[31m [33mPostCard[31m[33m;[31m
+ [90m     |[31m [31m[1m^[22m[31m
+ [90m 264 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Desktop/Kyro-Social/web-frontend/src/components/feed/PostCard.jsx[39m:263:0
+[33m  261|  };
+  262|  
+  263|  export default PostCard;
+     |  ^
+  264|  [39m
+      at constructor (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12871:18)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseStatementListItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseBlock (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+      at JSXParserMixin.parseFunctionBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12100:24)
+      at JSXParserMixin.parseArrowExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12075:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11687:12)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12421:16)
+      at JSXParserMixin.parseMaybeAssignAllowIn (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at JSXParserMixin.parseVar (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13384:91)
+      at JSXParserMixin.parseVarStatement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13230:10)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12851:23)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseModuleItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseProgram (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+      at JSXParserMixin.parseTopLevel (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+      at JSXParserMixin.parse (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+      at parse (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:261:32)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:223:11)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:189:28
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:113:33
+      at step (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:287:14)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:273:13
+[2m5:58:13 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Desktop\Kyro-Social\web-frontend\src\components\feed\PostCard.jsx: 'import' and 'export' may only appear at the top level. (263:0)
+
+[0m [90m 261 |[31m }[33m;[31m
+ [90m 262 |[31m
+[31m[1m>[22m[31m[90m 263 |[31m [36mexport[31m [36mdefault[31m [33mPostCard[31m[33m;[31m
+ [90m     |[31m [31m[1m^[22m[31m
+ [90m 264 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Desktop/Kyro-Social/web-frontend/src/components/feed/PostCard.jsx[39m:263:0
+[33m  261|  };
+  262|  
+  263|  export default PostCard;
+     |  ^
+  264|  [39m
+      at constructor (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12871:18)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseStatementListItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseBlock (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+      at JSXParserMixin.parseFunctionBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12100:24)
+      at JSXParserMixin.parseArrowExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12075:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11687:12)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12421:16)
+      at JSXParserMixin.parseMaybeAssignAllowIn (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at JSXParserMixin.parseVar (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13384:91)
+      at JSXParserMixin.parseVarStatement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13230:10)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12851:23)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseModuleItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseProgram (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+      at JSXParserMixin.parseTopLevel (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+      at JSXParserMixin.parse (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+      at parse (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:261:32)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:223:11)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:189:28
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:113:33
+      at step (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:287:14)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:273:13
+[2m5:58:13 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Desktop\Kyro-Social\web-frontend\src\components\feed\PostCard.jsx: 'import' and 'export' may only appear at the top level. (263:0)
+
+[0m [90m 261 |[31m }[33m;[31m
+ [90m 262 |[31m
+[31m[1m>[22m[31m[90m 263 |[31m [36mexport[31m [36mdefault[31m [33mPostCard[31m[33m;[31m
+ [90m     |[31m [31m[1m^[22m[31m
+ [90m 264 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Desktop/Kyro-Social/web-frontend/src/components/feed/PostCard.jsx[39m:263:0
+[33m  261|  };
+  262|  
+  263|  export default PostCard;
+     |  ^
+  264|  [39m
+      at constructor (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12871:18)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseStatementListItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseBlock (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+      at JSXParserMixin.parseFunctionBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12100:24)
+      at JSXParserMixin.parseArrowExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12075:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11687:12)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12421:16)
+      at JSXParserMixin.parseMaybeAssignAllowIn (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at JSXParserMixin.parseVar (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13384:91)
+      at JSXParserMixin.parseVarStatement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13230:10)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12851:23)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseModuleItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseProgram (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+      at JSXParserMixin.parseTopLevel (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+      at JSXParserMixin.parse (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+      at parse (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:261:32)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:223:11)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:189:28
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:113:33
+      at step (D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:287:14)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\gensync\index.js:273:13
+[2m6:29:49 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Desktop\Kyro-Social\web-frontend\src\pages\ProfilePage.jsx: Expected corresponding JSX closing tag for <Box>. (400:6)
+
+[0m [90m 398 |[31m           [33m<[31m[33mTab[31m label[33m=[31m[32m"Commented"[31m value[33m=[31m[32m"commented"[31m [33m/[31m[33m>[31m
+ [90m 399 |[31m         [33m<[31m[33m/[31m[33mTabs[31m[33m>[31m
+[31m[1m>[22m[31m[90m 400 |[31m       [33m<[31m[33m/[31m[33mCard[31m[33m>[31m
+ [90m     |[31m       [31m[1m^[22m[31m
+ [90m 401 |[31m
+ [90m 402 |[31m       {postsLoading [33m?[31m (
+ [90m 403 |[31m         [33m<[31m[33mFeedSkeleton[31m count[33m=[31m{[35m2[31m} [33m/[31m[33m>[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Desktop/Kyro-Social/web-frontend/src/pages/ProfilePage.jsx[39m:400:6
+[33m  398|            <Tab label="Commented" value="commented" />
+  399|          </Tabs>
+  400|        </Card>
+     |        ^
+  401|  
+  402|        {postsLoading ? ([39m
+      at constructor (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at JSXParserMixin.jsxParseElementAt (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4727:16)
+      at JSXParserMixin.jsxParseElement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4749:17)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4759:19)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12426:12)
+      at JSXParserMixin.parseMaybeAssignAllowIn (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at JSXParserMixin.parseMaybeAssignAllowInOrVoidPattern (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12493:17)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11675:28)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at JSXParserMixin.parseExpressionBase (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10784:23)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12421:16)
+      at JSXParserMixin.parseExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:17)
+      at JSXParserMixin.parseReturnStatement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13142:28)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12798:21)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseStatementListItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseBlock (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+      at JSXParserMixin.parseFunctionBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12100:24)
+      at JSXParserMixin.parseArrowExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12075:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11687:12)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+[2m6:29:49 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Desktop\Kyro-Social\web-frontend\src\pages\ProfilePage.jsx: Expected corresponding JSX closing tag for <Box>. (400:6)
+
+[0m [90m 398 |[31m           [33m<[31m[33mTab[31m label[33m=[31m[32m"Commented"[31m value[33m=[31m[32m"commented"[31m [33m/[31m[33m>[31m
+ [90m 399 |[31m         [33m<[31m[33m/[31m[33mTabs[31m[33m>[31m
+[31m[1m>[22m[31m[90m 400 |[31m       [33m<[31m[33m/[31m[33mCard[31m[33m>[31m
+ [90m     |[31m       [31m[1m^[22m[31m
+ [90m 401 |[31m
+ [90m 402 |[31m       {postsLoading [33m?[31m (
+ [90m 403 |[31m         [33m<[31m[33mFeedSkeleton[31m count[33m=[31m{[35m2[31m} [33m/[31m[33m>[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Desktop/Kyro-Social/web-frontend/src/pages/ProfilePage.jsx[39m:400:6
+[33m  398|            <Tab label="Commented" value="commented" />
+  399|          </Tabs>
+  400|        </Card>
+     |        ^
+  401|  
+  402|        {postsLoading ? ([39m
+      at constructor (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at JSXParserMixin.jsxParseElementAt (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4727:16)
+      at JSXParserMixin.jsxParseElement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4749:17)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4759:19)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12426:12)
+      at JSXParserMixin.parseMaybeAssignAllowIn (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at JSXParserMixin.parseMaybeAssignAllowInOrVoidPattern (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12493:17)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11675:28)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at JSXParserMixin.parseExpressionBase (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10784:23)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12421:16)
+      at JSXParserMixin.parseExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:17)
+      at JSXParserMixin.parseReturnStatement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13142:28)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12798:21)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseStatementListItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseBlock (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+      at JSXParserMixin.parseFunctionBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12100:24)
+      at JSXParserMixin.parseArrowExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12075:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11687:12)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+[2m6:29:50 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Desktop\Kyro-Social\web-frontend\src\pages\ProfilePage.jsx: Expected corresponding JSX closing tag for <Box>. (400:6)
+
+[0m [90m 398 |[31m           [33m<[31m[33mTab[31m label[33m=[31m[32m"Commented"[31m value[33m=[31m[32m"commented"[31m [33m/[31m[33m>[31m
+ [90m 399 |[31m         [33m<[31m[33m/[31m[33mTabs[31m[33m>[31m
+[31m[1m>[22m[31m[90m 400 |[31m       [33m<[31m[33m/[31m[33mCard[31m[33m>[31m
+ [90m     |[31m       [31m[1m^[22m[31m
+ [90m 401 |[31m
+ [90m 402 |[31m       {postsLoading [33m?[31m (
+ [90m 403 |[31m         [33m<[31m[33mFeedSkeleton[31m count[33m=[31m{[35m2[31m} [33m/[31m[33m>[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Desktop/Kyro-Social/web-frontend/src/pages/ProfilePage.jsx[39m:400:6
+[33m  398|            <Tab label="Commented" value="commented" />
+  399|          </Tabs>
+  400|        </Card>
+     |        ^
+  401|  
+  402|        {postsLoading ? ([39m
+      at constructor (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at JSXParserMixin.jsxParseElementAt (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4727:16)
+      at JSXParserMixin.jsxParseElement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4749:17)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4759:19)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12426:12)
+      at JSXParserMixin.parseMaybeAssignAllowIn (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at JSXParserMixin.parseMaybeAssignAllowInOrVoidPattern (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12493:17)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11675:28)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at JSXParserMixin.parseExpressionBase (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10784:23)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12421:16)
+      at JSXParserMixin.parseExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:17)
+      at JSXParserMixin.parseReturnStatement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13142:28)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12798:21)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseStatementListItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseBlock (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+      at JSXParserMixin.parseFunctionBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12100:24)
+      at JSXParserMixin.parseArrowExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12075:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11687:12)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+[2m6:29:50 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Desktop\Kyro-Social\web-frontend\src\pages\ProfilePage.jsx: Expected corresponding JSX closing tag for <Box>. (400:6)
+
+[0m [90m 398 |[31m           [33m<[31m[33mTab[31m label[33m=[31m[32m"Commented"[31m value[33m=[31m[32m"commented"[31m [33m/[31m[33m>[31m
+ [90m 399 |[31m         [33m<[31m[33m/[31m[33mTabs[31m[33m>[31m
+[31m[1m>[22m[31m[90m 400 |[31m       [33m<[31m[33m/[31m[33mCard[31m[33m>[31m
+ [90m     |[31m       [31m[1m^[22m[31m
+ [90m 401 |[31m
+ [90m 402 |[31m       {postsLoading [33m?[31m (
+ [90m 403 |[31m         [33m<[31m[33mFeedSkeleton[31m count[33m=[31m{[35m2[31m} [33m/[31m[33m>[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Desktop/Kyro-Social/web-frontend/src/pages/ProfilePage.jsx[39m:400:6
+[33m  398|            <Tab label="Commented" value="commented" />
+  399|          </Tabs>
+  400|        </Card>
+     |        ^
+  401|  
+  402|        {postsLoading ? ([39m
+      at constructor (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at JSXParserMixin.jsxParseElementAt (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4727:16)
+      at JSXParserMixin.jsxParseElement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4749:17)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4759:19)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12426:12)
+      at JSXParserMixin.parseMaybeAssignAllowIn (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at JSXParserMixin.parseMaybeAssignAllowInOrVoidPattern (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12493:17)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11675:28)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at JSXParserMixin.parseExpressionBase (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10784:23)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12421:16)
+      at JSXParserMixin.parseExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:17)
+      at JSXParserMixin.parseReturnStatement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13142:28)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12798:21)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseStatementListItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseBlock (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+      at JSXParserMixin.parseFunctionBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12100:24)
+      at JSXParserMixin.parseArrowExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12075:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11687:12)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+[2m6:29:50 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Desktop\Kyro-Social\web-frontend\src\pages\ProfilePage.jsx: Expected corresponding JSX closing tag for <Box>. (400:6)
+
+[0m [90m 398 |[31m           [33m<[31m[33mTab[31m label[33m=[31m[32m"Commented"[31m value[33m=[31m[32m"commented"[31m [33m/[31m[33m>[31m
+ [90m 399 |[31m         [33m<[31m[33m/[31m[33mTabs[31m[33m>[31m
+[31m[1m>[22m[31m[90m 400 |[31m       [33m<[31m[33m/[31m[33mCard[31m[33m>[31m
+ [90m     |[31m       [31m[1m^[22m[31m
+ [90m 401 |[31m
+ [90m 402 |[31m       {postsLoading [33m?[31m (
+ [90m 403 |[31m         [33m<[31m[33mFeedSkeleton[31m count[33m=[31m{[35m2[31m} [33m/[31m[33m>[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Desktop/Kyro-Social/web-frontend/src/pages/ProfilePage.jsx[39m:400:6
+[33m  398|            <Tab label="Commented" value="commented" />
+  399|          </Tabs>
+  400|        </Card>
+     |        ^
+  401|  
+  402|        {postsLoading ? ([39m
+      at constructor (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at JSXParserMixin.jsxParseElementAt (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4727:16)
+      at JSXParserMixin.jsxParseElement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4749:17)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4759:19)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12426:12)
+      at JSXParserMixin.parseMaybeAssignAllowIn (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at JSXParserMixin.parseMaybeAssignAllowInOrVoidPattern (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12493:17)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11675:28)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at JSXParserMixin.parseExpressionBase (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10784:23)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12421:16)
+      at JSXParserMixin.parseExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:17)
+      at JSXParserMixin.parseReturnStatement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13142:28)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12798:21)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseStatementListItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseBlock (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+      at JSXParserMixin.parseFunctionBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12100:24)
+      at JSXParserMixin.parseArrowExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12075:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11687:12)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+[2m6:29:50 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Desktop\Kyro-Social\web-frontend\src\pages\ProfilePage.jsx: Expected corresponding JSX closing tag for <Box>. (400:6)
+
+[0m [90m 398 |[31m           [33m<[31m[33mTab[31m label[33m=[31m[32m"Commented"[31m value[33m=[31m[32m"commented"[31m [33m/[31m[33m>[31m
+ [90m 399 |[31m         [33m<[31m[33m/[31m[33mTabs[31m[33m>[31m
+[31m[1m>[22m[31m[90m 400 |[31m       [33m<[31m[33m/[31m[33mCard[31m[33m>[31m
+ [90m     |[31m       [31m[1m^[22m[31m
+ [90m 401 |[31m
+ [90m 402 |[31m       {postsLoading [33m?[31m (
+ [90m 403 |[31m         [33m<[31m[33mFeedSkeleton[31m count[33m=[31m{[35m2[31m} [33m/[31m[33m>[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Desktop/Kyro-Social/web-frontend/src/pages/ProfilePage.jsx[39m:400:6
+[33m  398|            <Tab label="Commented" value="commented" />
+  399|          </Tabs>
+  400|        </Card>
+     |        ^
+  401|  
+  402|        {postsLoading ? ([39m
+      at constructor (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at JSXParserMixin.jsxParseElementAt (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4727:16)
+      at JSXParserMixin.jsxParseElement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4749:17)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4759:19)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12426:12)
+      at JSXParserMixin.parseMaybeAssignAllowIn (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at JSXParserMixin.parseMaybeAssignAllowInOrVoidPattern (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12493:17)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11675:28)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at JSXParserMixin.parseExpressionBase (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10784:23)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12421:16)
+      at JSXParserMixin.parseExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:17)
+      at JSXParserMixin.parseReturnStatement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13142:28)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12798:21)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseStatementListItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseBlock (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+      at JSXParserMixin.parseFunctionBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12100:24)
+      at JSXParserMixin.parseArrowExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12075:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11687:12)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+[2m6:29:50 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Desktop\Kyro-Social\web-frontend\src\pages\ProfilePage.jsx: Expected corresponding JSX closing tag for <Box>. (400:6)
+
+[0m [90m 398 |[31m           [33m<[31m[33mTab[31m label[33m=[31m[32m"Commented"[31m value[33m=[31m[32m"commented"[31m [33m/[31m[33m>[31m
+ [90m 399 |[31m         [33m<[31m[33m/[31m[33mTabs[31m[33m>[31m
+[31m[1m>[22m[31m[90m 400 |[31m       [33m<[31m[33m/[31m[33mCard[31m[33m>[31m
+ [90m     |[31m       [31m[1m^[22m[31m
+ [90m 401 |[31m
+ [90m 402 |[31m       {postsLoading [33m?[31m (
+ [90m 403 |[31m         [33m<[31m[33mFeedSkeleton[31m count[33m=[31m{[35m2[31m} [33m/[31m[33m>[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Desktop/Kyro-Social/web-frontend/src/pages/ProfilePage.jsx[39m:400:6
+[33m  398|            <Tab label="Commented" value="commented" />
+  399|          </Tabs>
+  400|        </Card>
+     |        ^
+  401|  
+  402|        {postsLoading ? ([39m
+      at constructor (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at JSXParserMixin.jsxParseElementAt (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4727:16)
+      at JSXParserMixin.jsxParseElement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4749:17)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4759:19)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12426:12)
+      at JSXParserMixin.parseMaybeAssignAllowIn (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at JSXParserMixin.parseMaybeAssignAllowInOrVoidPattern (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12493:17)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11675:28)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at JSXParserMixin.parseExpressionBase (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10784:23)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12421:16)
+      at JSXParserMixin.parseExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:17)
+      at JSXParserMixin.parseReturnStatement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13142:28)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12798:21)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseStatementListItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseBlock (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+      at JSXParserMixin.parseFunctionBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12100:24)
+      at JSXParserMixin.parseArrowExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12075:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11687:12)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+[2m6:29:50 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Desktop\Kyro-Social\web-frontend\src\pages\ProfilePage.jsx: Expected corresponding JSX closing tag for <Box>. (400:6)
+
+[0m [90m 398 |[31m           [33m<[31m[33mTab[31m label[33m=[31m[32m"Commented"[31m value[33m=[31m[32m"commented"[31m [33m/[31m[33m>[31m
+ [90m 399 |[31m         [33m<[31m[33m/[31m[33mTabs[31m[33m>[31m
+[31m[1m>[22m[31m[90m 400 |[31m       [33m<[31m[33m/[31m[33mCard[31m[33m>[31m
+ [90m     |[31m       [31m[1m^[22m[31m
+ [90m 401 |[31m
+ [90m 402 |[31m       {postsLoading [33m?[31m (
+ [90m 403 |[31m         [33m<[31m[33mFeedSkeleton[31m count[33m=[31m{[35m2[31m} [33m/[31m[33m>[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Desktop/Kyro-Social/web-frontend/src/pages/ProfilePage.jsx[39m:400:6
+[33m  398|            <Tab label="Commented" value="commented" />
+  399|          </Tabs>
+  400|        </Card>
+     |        ^
+  401|  
+  402|        {postsLoading ? ([39m
+      at constructor (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at JSXParserMixin.jsxParseElementAt (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4727:16)
+      at JSXParserMixin.jsxParseElement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4749:17)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4759:19)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12426:12)
+      at JSXParserMixin.parseMaybeAssignAllowIn (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at JSXParserMixin.parseMaybeAssignAllowInOrVoidPattern (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12493:17)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11675:28)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at JSXParserMixin.parseExpressionBase (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10784:23)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:39
+      at JSXParserMixin.allowInAnd (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12421:16)
+      at JSXParserMixin.parseExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10780:17)
+      at JSXParserMixin.parseReturnStatement (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13142:28)
+      at JSXParserMixin.parseStatementContent (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12798:21)
+      at JSXParserMixin.parseStatementLike (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseStatementListItem (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12747:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13316:61)
+      at JSXParserMixin.parseBlockBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseBlock (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:13297:10)
+      at JSXParserMixin.parseFunctionBody (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12100:24)
+      at JSXParserMixin.parseArrowExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:12075:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11687:12)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at JSXParserMixin.parseExprAtom (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at JSXParserMixin.parseExprSubscripts (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at JSXParserMixin.parseUpdate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at JSXParserMixin.parseMaybeUnary (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at JSXParserMixin.parseExprOps (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at JSXParserMixin.parseMaybeConditional (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at JSXParserMixin.parseMaybeAssign (D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at D:\Desktop\Kyro-Social\web-frontend\node_modules\@babel\parser\lib\index.js:10800:39

@@ -1,282 +1,551 @@
+const mongoose = require('mongoose');
 const Post = require('../models/Post');
 const User = require('../models/User');
 const { uploadImage, deleteImage } = require('../utils/cloudinary');
+const asyncHandler = require('../utils/asyncHandler');
+const { pushNotification } = require('../utils/notifications');
+const { getIO } = require('../utils/socket');
 
-/**
- * POST /api/posts
- */
-exports.createPost = async (req, res) => {
-  try {
-    const { content } = req.body;
-    let imageData = null;
+const clampNumber = (value, defaultValue, min, max) => {
+  const parsed = Number.parseInt(value, 10);
+  if (Number.isNaN(parsed)) return defaultValue;
+  return Math.max(min, Math.min(max, parsed));
+};
 
-    // Upload image if provided
-    if (req.file) {
-      imageData = await uploadImage(req.file.buffer, 'kyro-social/posts');
-    }
+const normalizeFilter = (value = 'all') => value.toLowerCase().replace(/[\s_]+/g, '');
 
-    if (!content && !imageData) {
-      return res.status(400).json({ message: 'Post must have either text or an image' });
-    }
-
-    const post = await Post.create({
-      author: req.user._id,
-      authorUsername: req.user.username,
-      authorName: req.user.name,
-      authorAvatar: req.user.profilePicture || '',
-      content: content || '',
-      image: imageData ? imageData.url : '',
-      imagePublicId: imageData ? imageData.publicId : '',
-    });
-
-    res.status(201).json({
-      message: 'Post created successfully',
-      post,
-    });
-  } catch (error) {
-    console.error('Create post error:', error);
-    res.status(500).json({ message: 'Failed to create post' });
+const buildFeedSort = (filter) => {
+  switch (normalizeFilter(filter)) {
+    case 'mostliked':
+      return { likesCount: -1, createdAt: -1 };
+    case 'mostcommented':
+      return { commentsCount: -1, createdAt: -1 };
+    case 'mostshared':
+      return { shareCount: -1, createdAt: -1 };
+    case 'foryou':
+      return { score: -1, createdAt: -1 };
+    default:
+      return { createdAt: -1 };
   }
 };
 
-/**
- * GET /api/posts
- * Query: ?filter=all|forYou|mostLiked|mostCommented&page=1&limit=10
- */
-exports.getFeed = async (req, res) => {
-  try {
-    const { filter = 'all', page = 1, limit = 10 } = req.query;
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-    let query = {};
-    let sort = { createdAt: -1 };
+const toObjectId = (value) => new mongoose.Types.ObjectId(value);
 
-    switch (filter) {
-      case 'forYou':
-        if (req.user) {
-          // Hybrid: posts from followed users + top engaging posts
-          const currentUser = await User.findById(req.user._id);
-          const followingList = currentUser.following || [];
+const withCompatPostShape = (post) => {
+  const author = post.author || {};
+  const likes = Array.isArray(post.likes)
+    ? post.likes.map((like) => (typeof like === 'string' ? { username: like } : like))
+    : [];
 
-          if (followingList.length > 0) {
-            query = {
-              $or: [
-                { authorUsername: { $in: followingList } },
-                { likeCount: { $gte: 3 } }, // Posts with 3+ likes
-              ],
-            };
-          } else {
-            // No following? Show engagement-based
-            sort = { likeCount: -1, commentCount: -1, createdAt: -1 };
-          }
-        } else {
-          sort = { likeCount: -1, commentCount: -1, createdAt: -1 };
-        }
-        break;
+  const comments = Array.isArray(post.comments)
+    ? post.comments.map((comment) => ({
+        ...comment,
+        createdAt: comment.createdAt || comment.timestamp || post.createdAt,
+      }))
+    : [];
 
-      case 'mostLiked':
-        sort = { likeCount: -1, createdAt: -1 };
-        break;
-
-      case 'mostCommented':
-        sort = { commentCount: -1, createdAt: -1 };
-        break;
-
-      default: // 'all'
-        sort = { createdAt: -1 };
-        break;
-    }
-
-    const [posts, total] = await Promise.all([
-      Post.find(query).sort(sort).skip(skip).limit(parseInt(limit)),
-      Post.countDocuments(query),
-    ]);
-
-    res.json({
-      posts,
-      pagination: {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(total / parseInt(limit)),
-        totalPosts: total,
-        hasMore: skip + posts.length < total,
-      },
-    });
-  } catch (error) {
-    console.error('Feed error:', error);
-    res.status(500).json({ message: 'Failed to fetch feed' });
-  }
+  return {
+    ...post,
+    author,
+    // Preferred fields
+    textContent: post.textContent || '',
+    imageUrl: post.imageUrl || '',
+    // Frontend compatibility fields
+    content: post.textContent || '',
+    image: post.imageUrl || '',
+    authorUsername: author.username || post.authorUsername || '',
+    authorName: author.name || post.authorName || '',
+    authorAvatar: author.profilePicture || post.authorAvatar || '',
+    likes,
+    comments,
+    likeCount: typeof post.likeCount === 'number' ? post.likeCount : likes.length,
+    commentCount: typeof post.commentCount === 'number' ? post.commentCount : comments.length,
+    shareCount: post.shareCount || 0,
+    type: post.type || 'all',
+  };
 };
 
-/**
- * GET /api/posts/:id
- */
-exports.getPost = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-    res.json({ post });
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch post' });
+exports.createPost = asyncHandler(async (req, res) => {
+  const textContent = (req.body.textContent || req.body.content || '').trim();
+  let imageResult = null;
+
+  if (req.file) {
+    imageResult = await uploadImage(req.file.buffer, 'kyro-social/posts');
   }
-};
 
-/**
- * PUT /api/posts/:id/like
- */
-exports.toggleLike = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-
-    const userId = req.user._id.toString();
-    const username = req.user.username;
-    const existingLikeIndex = post.likes.findIndex(
-      (like) => like.userId.toString() === userId
-    );
-
-    if (existingLikeIndex > -1) {
-      // Unlike
-      post.likes.splice(existingLikeIndex, 1);
-      post.likeCount = Math.max(0, post.likeCount - 1);
-      // Remove from interactedUsers if no other interactions
-      const hasCommented = post.comments.some((c) => c.userId.toString() === userId);
-      if (!hasCommented) {
-        post.interactedUsers = post.interactedUsers.filter((u) => u !== username);
-      }
-    } else {
-      // Like
-      post.likes.push({ userId: req.user._id, username, likedAt: new Date() });
-      post.likeCount = post.likes.length;
-      if (!post.interactedUsers.includes(username)) {
-        post.interactedUsers.push(username);
-      }
-    }
-
-    await post.save();
-
-    res.json({
-      message: existingLikeIndex > -1 ? 'Post unliked' : 'Post liked',
-      post,
-    });
-  } catch (error) {
-    console.error('Like error:', error);
-    res.status(500).json({ message: 'Failed to update like' });
+  if (!textContent && !imageResult) {
+    return res.status(400).json({ message: 'Post requires textContent or an image' });
   }
-};
 
-/**
- * POST /api/posts/:id/comment
- */
-exports.addComment = async (req, res) => {
-  try {
-    const { text } = req.body;
-    if (!text || !text.trim()) {
-      return res.status(400).json({ message: 'Comment text is required' });
-    }
+  const post = await Post.create({
+    author: req.user._id,
+    textContent,
+    imageUrl: imageResult?.url || '',
+    imagePublicId: imageResult?.publicId || '',
+    likes: [],
+    comments: [],
+    type: req.body.type === 'promo' ? 'promo' : 'all',
+  });
 
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-
-    const comment = {
-      userId: req.user._id,
+  const compatPost = withCompatPostShape({
+    ...post.toObject(),
+    author: {
+      _id: req.user._id,
       username: req.user.username,
-      userName: req.user.name,
-      userAvatar: req.user.profilePicture || '',
-      text: text.trim(),
-      createdAt: new Date(),
-    };
+      name: req.user.name,
+      profilePicture: req.user.profilePicture,
+      isVerified: req.user.isVerified,
+    },
+  });
 
-    post.comments.push(comment);
-    post.commentCount = post.comments.length;
+  res.status(201).json({
+    message: 'Post created successfully',
+    post: compatPost,
+  });
+});
 
-    if (!post.interactedUsers.includes(req.user.username)) {
-      post.interactedUsers.push(req.user.username);
-    }
+exports.getFeed = asyncHandler(async (req, res) => {
+  const filter = normalizeFilter(req.query.filter || 'all');
+  const limit = clampNumber(req.query.limit, 10, 1, 50);
+  const cursor = req.query.cursor ? new Date(req.query.cursor) : null;
+  const useCursor = cursor && !Number.isNaN(cursor.getTime());
 
-    await post.save();
+  const page = clampNumber(req.query.page, 1, 1, 1000000);
+  const offsetFromPage = (page - 1) * limit;
+  const offset = req.query.offset !== undefined
+    ? clampNumber(req.query.offset, 0, 0, 1000000)
+    : offsetFromPage;
 
-    res.status(201).json({
-      message: 'Comment added',
-      comment: post.comments[post.comments.length - 1],
-      commentCount: post.commentCount,
-    });
-  } catch (error) {
-    console.error('Comment error:', error);
-    res.status(500).json({ message: 'Failed to add comment' });
-  }
-};
+  const pipeline = [];
 
-/**
- * DELETE /api/posts/:id
- */
-exports.deletePost = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-
-    if (post.author.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'You can only delete your own posts' });
-    }
-
-    // Delete image from Cloudinary
-    if (post.imagePublicId) {
-      await deleteImage(post.imagePublicId);
-    }
-
-    await Post.findByIdAndDelete(req.params.id);
-
-    res.json({ message: 'Post deleted successfully' });
-  } catch (error) {
-    console.error('Delete post error:', error);
-    res.status(500).json({ message: 'Failed to delete post' });
-  }
-};
-
-/**
- * GET /api/posts/user/:username
- */
-exports.getUserPosts = async (req, res) => {
-  try {
-    const { page = 1, limit = 10, type = 'posts' } = req.query;
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-    let query = {};
-    let sort = { createdAt: -1 };
-
-    switch (type) {
-      case 'liked':
-        query = { 'likes.username': req.params.username };
-        break;
-      case 'commented':
-        query = { 'comments.username': req.params.username };
-        break;
-      default:
-        query = { authorUsername: req.params.username };
-        break;
-    }
-
-    const [posts, total] = await Promise.all([
-      Post.find(query).sort(sort).skip(skip).limit(parseInt(limit)),
-      Post.countDocuments(query),
-    ]);
-
-    res.json({
-      posts,
-      pagination: {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(total / parseInt(limit)),
-        totalPosts: total,
-        hasMore: skip + posts.length < total,
+  if (useCursor) {
+    pipeline.push({
+      $match: {
+        createdAt: { $lt: cursor },
       },
     });
-  } catch (error) {
-    console.error('User posts error:', error);
-    res.status(500).json({ message: 'Failed to fetch user posts' });
   }
-};
+
+  pipeline.push(
+    {
+      $addFields: {
+        likesCount: { $size: '$likes' },
+        commentsCount: { $size: '$comments' },
+      },
+    }
+  );
+  
+  if (req.query.type === 'promo') {
+    pipeline.push({ $match: { type: 'promo' } });
+  } else if (req.query.type === 'all') {
+    pipeline.push({ $match: { type: 'all' } });
+  }
+
+  if (filter === 'foryou') {
+    if (req.user) {
+      pipeline.push({
+        $addFields: {
+          score: {
+            $add: [
+              { $multiply: [{ $size: '$likes' }, 2] },
+              { $multiply: [{ $size: '$comments' }, 3] },
+              {
+                $cond: [
+                  {
+                    $in: [req.user.username, '$likes'],
+                  },
+                  4,
+                  0,
+                ],
+              },
+              {
+                $cond: [
+                  {
+                    $in: [
+                      req.user.username,
+                      {
+                        $map: {
+                          input: '$comments',
+                          as: 'comment',
+                          in: '$$comment.username',
+                        },
+                      },
+                    ],
+                  },
+                  4,
+                  0,
+                ],
+              },
+            ],
+          },
+        },
+      });
+    } else {
+      pipeline.push({
+        $addFields: {
+          score: {
+            $add: [
+              { $multiply: [{ $size: '$likes' }, 2] },
+              { $multiply: [{ $size: '$comments' }, 3] },
+            ],
+          },
+        },
+      });
+    }
+  }
+
+  pipeline.push({ $sort: buildFeedSort(filter) });
+
+  const totalResult = useCursor
+    ? [{ count: null }]
+    : await Post.aggregate([...pipeline, { $count: 'count' }]);
+  const total = totalResult[0]?.count || 0;
+
+  if (!useCursor) {
+    pipeline.push({ $skip: offset });
+  }
+  pipeline.push({ $limit: limit });
+  pipeline.push(
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'author',
+        foreignField: '_id',
+        as: 'authorData',
+      },
+    },
+    {
+      $unwind: '$authorData',
+    },
+    {
+      $project: {
+        textContent: 1,
+        imageUrl: 1,
+        likes: {
+          $map: {
+            input: '$likes',
+            as: 'username',
+            in: { username: '$$username' },
+          },
+        },
+        comments: {
+          $map: {
+            input: '$comments',
+            as: 'comment',
+            in: {
+              username: '$$comment.username',
+              text: '$$comment.text',
+              timestamp: '$$comment.timestamp',
+              createdAt: '$$comment.timestamp',
+            },
+          },
+        },
+        createdAt: 1,
+        updatedAt: 1,
+        shareCount: 1,
+        type: 1,
+        likeCount: '$likesCount',
+        commentCount: '$commentsCount',
+        author: {
+          _id: '$authorData._id',
+          username: '$authorData.username',
+          name: '$authorData.name',
+          profilePicture: '$authorData.profilePicture',
+          isVerified: '$authorData.isVerified',
+        },
+      },
+    }
+  );
+
+  const posts = await Post.aggregate(pipeline);
+  const nextCursor = posts.length ? posts[posts.length - 1].createdAt : null;
+
+  res.status(200).json({
+    posts: posts.map(withCompatPostShape),
+    pagination: {
+      limit,
+      offset,
+      total,
+      currentPage: page,
+      totalPages: Math.max(1, Math.ceil(total / limit)),
+      hasMore: useCursor ? posts.length === limit : offset + posts.length < total,
+      nextCursor,
+      mode: useCursor ? 'cursor' : 'offset',
+    },
+  });
+});
+
+exports.getPost = asyncHandler(async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return res.status(400).json({ message: 'Invalid post id' });
+  }
+
+  const [post] = await Post.aggregate([
+    { $match: { _id: toObjectId(req.params.id) } },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'author',
+        foreignField: '_id',
+        as: 'authorData',
+      },
+    },
+    { $unwind: '$authorData' },
+    {
+      $addFields: {
+        likesCount: { $size: '$likes' },
+        commentsCount: { $size: '$comments' },
+      },
+    },
+    {
+      $project: {
+        textContent: 1,
+        imageUrl: 1,
+        likes: {
+          $map: { input: '$likes', as: 'username', in: { username: '$$username' } },
+        },
+        comments: {
+          $map: {
+            input: '$comments',
+            as: 'comment',
+            in: {
+              username: '$$comment.username',
+              text: '$$comment.text',
+              timestamp: '$$comment.timestamp',
+              createdAt: '$$comment.timestamp',
+            },
+          },
+        },
+        createdAt: 1,
+        updatedAt: 1,
+        likeCount: '$likesCount',
+        commentCount: '$commentsCount',
+        author: {
+          _id: '$authorData._id',
+          username: '$authorData.username',
+          name: '$authorData.name',
+          profilePicture: '$authorData.profilePicture',
+          isVerified: '$authorData.isVerified',
+        },
+        shareCount: 1,
+        type: 1,
+      },
+    },
+  ]);
+
+  if (!post) {
+    return res.status(404).json({ message: 'Post not found' });
+  }
+
+  res.status(200).json({ post: withCompatPostShape(post) });
+});
+
+exports.toggleLike = asyncHandler(async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return res.status(400).json({ message: 'Invalid post id' });
+  }
+
+  const post = await Post.findById(req.params.id).select('+imagePublicId');
+  if (!post) {
+    return res.status(404).json({ message: 'Post not found' });
+  }
+
+  const username = req.user.username;
+  const alreadyLiked = post.likes.includes(username);
+
+  if (alreadyLiked) {
+    post.likes = post.likes.filter((item) => item !== username);
+  } else {
+    post.likes.push(username);
+  }
+
+  await post.save();
+
+  if (!alreadyLiked) {
+    const io = getIO();
+    if (io) {
+      io.emit('post:liked', {
+        postId: String(post._id),
+        by: username,
+        likeCount: post.likes.length,
+      });
+    }
+
+    const author = await User.findById(post.author).select('username');
+    if (author?.username) {
+      await pushNotification({
+        toUsername: author.username,
+        type: 'like',
+        fromUsername: username,
+        postId: post._id,
+        text: `${username} liked your post`,
+      });
+    }
+  }
+
+  res.status(200).json({
+    message: alreadyLiked ? 'Post unliked' : 'Post liked',
+    likeCount: post.likes.length,
+    likes: post.likes.map((u) => ({ username: u })),
+  });
+});
+
+exports.addComment = asyncHandler(async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return res.status(400).json({ message: 'Invalid post id' });
+  }
+
+  const post = await Post.findById(req.params.id);
+  if (!post) {
+    return res.status(404).json({ message: 'Post not found' });
+  }
+
+  const comment = {
+    username: req.user.username,
+    text: req.body.text.trim(),
+    timestamp: new Date(),
+  };
+
+  post.comments.push(comment);
+  await post.save();
+
+  const io = getIO();
+  if (io) {
+    io.emit('post:commented', {
+      postId: String(post._id),
+      by: req.user.username,
+      commentCount: post.comments.length,
+      comment,
+    });
+  }
+
+  const author = await User.findById(post.author).select('username');
+  if (author?.username) {
+    await pushNotification({
+      toUsername: author.username,
+      type: 'comment',
+      fromUsername: req.user.username,
+      postId: post._id,
+      text: `${req.user.username} commented: "${comment.text}"`,
+    });
+  }
+
+  res.status(201).json({
+    message: 'Comment added',
+    comment: {
+      ...comment,
+      createdAt: comment.timestamp,
+    },
+    commentCount: post.comments.length,
+  });
+});
+
+exports.deletePost = asyncHandler(async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return res.status(400).json({ message: 'Invalid post id' });
+  }
+
+  const post = await Post.findById(req.params.id).select('+imagePublicId');
+  if (!post) {
+    return res.status(404).json({ message: 'Post not found' });
+  }
+
+  if (post.author.toString() !== req.user._id.toString()) {
+    return res.status(403).json({ message: 'You can only delete your own posts' });
+  }
+
+  if (post.imagePublicId) {
+    await deleteImage(post.imagePublicId);
+  }
+
+  await Post.deleteOne({ _id: post._id });
+
+  res.status(200).json({ message: 'Post deleted successfully' });
+});
+
+exports.getUserPosts = asyncHandler(async (req, res) => {
+  const limit = clampNumber(req.query.limit, 10, 1, 50);
+  const offset = clampNumber(req.query.offset, 0, 0, 1000000);
+  const queryType = (req.query.type || 'posts').toLowerCase();
+  const username = req.params.username.toLowerCase();
+
+  const pipeline = [
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'author',
+        foreignField: '_id',
+        as: 'authorData',
+      },
+    },
+    { $unwind: '$authorData' },
+  ];
+
+  if (queryType === 'liked') {
+    pipeline.push({ $match: { likes: username } });
+  } else if (queryType === 'commented') {
+    pipeline.push({ $match: { 'comments.username': username } });
+  } else {
+    pipeline.push({ $match: { 'authorData.username': username } });
+  }
+
+  pipeline.push({ $sort: { createdAt: -1 } });
+
+  const totalResult = await Post.aggregate([...pipeline, { $count: 'count' }]);
+  const total = totalResult[0]?.count || 0;
+
+  pipeline.push(
+    { $skip: offset },
+    { $limit: limit },
+    {
+      $addFields: {
+        likeCount: { $size: '$likes' },
+        commentCount: { $size: '$comments' },
+      },
+    },
+    {
+      $project: {
+        textContent: 1,
+        imageUrl: 1,
+        likes: {
+          $map: { input: '$likes', as: 'username', in: { username: '$$username' } },
+        },
+        comments: {
+          $map: {
+            input: '$comments',
+            as: 'comment',
+            in: {
+              username: '$$comment.username',
+              text: '$$comment.text',
+              timestamp: '$$comment.timestamp',
+              createdAt: '$$comment.timestamp',
+            },
+          },
+        },
+        createdAt: 1,
+        updatedAt: 1,
+        likeCount: 1,
+        commentCount: 1,
+        author: {
+          _id: '$authorData._id',
+          username: '$authorData.username',
+          name: '$authorData.name',
+          profilePicture: '$authorData.profilePicture',
+          isVerified: '$authorData.isVerified',
+        },
+      },
+    }
+  );
+
+  const posts = await Post.aggregate(pipeline);
+
+  res.status(200).json({
+    posts: posts.map(withCompatPostShape),
+    pagination: {
+      limit,
+      offset,
+      total,
+      hasMore: offset + posts.length < total,
+    },
+  });
+});

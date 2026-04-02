@@ -1,396 +1,292 @@
-const crypto = require('crypto');
+const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
-const { sendOTPEmail, sendWelcomeEmail, sendResetEmail, sendSecurityAlert } = require('../utils/email');
+const asyncHandler = require('../utils/asyncHandler');
+const { sendOTPEmail, sendResetEmail, sendWelcomeEmail } = require('../utils/email');
 
-// Generate 6-digit OTP
-const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+const generateOTP = () => String(Math.floor(100000 + Math.random() * 900000));
+
+const setOtpForUser = (user) => {
+  user.otp = generateOTP();
+  user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
 };
 
-/**
- * POST /api/auth/signup
- */
-exports.signup = async (req, res) => {
-  try {
-    const { name, username, email, password } = req.body;
+const sanitizeUser = (user) => ({
+  id: user._id,
+  name: user.name,
+  username: user.username,
+  email: user.email,
+  googleId: user.googleId || null,
+  profilePicture: user.profilePicture,
+  coverPhoto: user.coverPhoto,
+  website: user.website,
+  headline: user.headline,
+  location: user.location,
+  bio: user.bio,
+  isVerified: user.isVerified,
+  followers: user.followers || [],
+  following: user.following || [],
+  joinedDate: user.joinedDate || user.createdAt,
+  createdAt: user.createdAt,
+});
 
-    // Validation
-    if (!name || !username || !email || !password) {
-      return res.status(400).json({ message: 'All fields are required' });
-    }
-    if (password.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters' });
-    }
+const buildUniqueUsername = async (name = 'user') => {
+  const base = name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 20) || 'user';
+  let candidate = base;
+  let suffix = 0;
 
-    // Check existing user
-    const existingEmail = await User.findOne({ email: email.toLowerCase() });
-    if (existingEmail) {
-      return res.status(400).json({ message: 'Email already registered' });
-    }
-    const existingUsername = await User.findOne({ username: username.toLowerCase() });
-    if (existingUsername) {
-      return res.status(400).json({ message: 'Username already taken' });
-    }
-
-    // Generate OTP
-    const otp = generateOTP();
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-    // Create user
-    const user = await User.create({
-      name,
-      username: username.toLowerCase(),
-      email: email.toLowerCase(),
-      password,
-      otp,
-      otpExpiry,
-      isVerified: false,
-      joinedDate: new Date(),
-    });
-
-    // Send OTP email
-    try {
-      await sendOTPEmail(email, name, otp);
-    } catch (emailError) {
-      console.error('Email send failed:', emailError.message);
-    }
-
-    const token = generateToken(user._id, user.username);
-
-    res.status(201).json({
-      message: 'Account created! Check your email for the verification code.',
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        username: user.username,
-        email: user.email,
-        isVerified: user.isVerified,
-        profilePicture: user.profilePicture,
-        joinedDate: user.joinedDate,
-      },
-    });
-  } catch (error) {
-    console.error('Signup error:', error);
-    res.status(500).json({ message: 'Server error during signup' });
+  while (await User.exists({ username: candidate })) {
+    suffix += 1;
+    candidate = `${base}${suffix}`;
   }
+
+  return candidate;
 };
 
-/**
- * POST /api/auth/verify-otp
- */
-exports.verifyOTP = async (req, res) => {
+exports.signup = asyncHandler(async (req, res) => {
+  const { name, username, email, password } = req.body;
+
+  const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+  if (existingUser) {
+    return res.status(409).json({
+      message: existingUser.email === email ? 'Email already in use' : 'Username already in use',
+    });
+  }
+
+  // Professional flow: no OTP at signup.
+  const user = await User.create({
+    name,
+    username,
+    email,
+    password,
+    isVerified: true,
+  });
+
   try {
-    const { email, otp } = req.body;
+    await sendWelcomeEmail(user.email, user.name);
+  } catch (error) {
+    // Non-blocking
+  }
 
-    if (!email || !otp) {
-      return res.status(400).json({ message: 'Email and OTP are required' });
-    }
+  res.status(201).json({
+    message: 'Signup successful',
+    token: generateToken(user._id, user.username),
+    user: sanitizeUser(user),
+  });
+});
 
-    const user = await User.findOne({ email: email.toLowerCase() }).select('+otp +otpExpiry');
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+exports.verifyOTP = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body;
 
-    if (user.isVerified) {
-      return res.status(400).json({ message: 'Email already verified' });
-    }
+  const user = await User.findOne({ email }).select('+otp +otpExpiry');
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
 
-    if (!user.otp || user.otp !== otp) {
-      return res.status(400).json({ message: 'Invalid verification code' });
-    }
+  if (!user.otp || user.otp !== otp || !user.otpExpiry || user.otpExpiry < new Date()) {
+    return res.status(400).json({ message: 'Invalid or expired OTP' });
+  }
 
-    if (new Date() > user.otpExpiry) {
-      return res.status(400).json({ message: 'Verification code has expired. Please request a new one.' });
-    }
+  user.otp = undefined;
+  user.otpExpiry = undefined;
+  await user.save();
 
+  res.status(200).json({
+    message: 'OTP verified successfully',
+    token: generateToken(user._id, user.username),
+    user: sanitizeUser(user),
+  });
+});
+
+exports.resendOTP = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email }).select('+otp +otpExpiry');
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  setOtpForUser(user);
+  await user.save();
+
+  let mailSent = false;
+  try {
+    await sendOTPEmail(user.email, user.name, user.otp);
+    mailSent = true;
+  } catch (error) {
+    mailSent = false;
+  }
+
+  const payload = {
+    message: mailSent ? 'A new OTP has been sent' : 'OTP generated. Email could not be delivered.',
+    mailSent,
+  };
+
+  if (process.env.NODE_ENV !== 'production') {
+    payload.devOtp = user.otp;
+  }
+
+  res.status(200).json(payload);
+});
+
+exports.login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email }).select('+password');
+  if (!user || !user.password) {
+    return res.status(401).json({ message: 'Invalid credentials' });
+  }
+
+  const isMatch = await user.comparePassword(password);
+  if (!isMatch) {
+    return res.status(401).json({ message: 'Invalid credentials' });
+  }
+
+  res.status(200).json({
+    message: 'Login successful',
+    token: generateToken(user._id, user.username),
+    user: sanitizeUser(user),
+  });
+});
+
+exports.guestLogin = asyncHandler(async (req, res) => {
+  const guestEmail = 'guest@kyrosocial.app';
+  let user = await User.findOne({ email: guestEmail });
+
+  if (!user) {
+    user = await User.create({
+      name: 'Guest User',
+      username: 'guest_user',
+      email: guestEmail,
+      password: `Guest@${Date.now()}`,
+      bio: 'Browsing Kyro as a guest account.',
+      isVerified: true,
+    });
+  }
+
+  res.status(200).json({
+    message: 'Guest login successful',
+    token: generateToken(user._id, user.username),
+    user: sanitizeUser(user),
+  });
+});
+
+exports.googleAuth = asyncHandler(async (req, res) => {
+  let email;
+  let name = 'Google User';
+  let picture = '';
+  let googleSub;
+
+  if (req.body.idToken) {
+    const ticket = await googleClient.verifyIdToken({
+      idToken: req.body.idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    email = payload.email?.toLowerCase();
+    name = payload.name || name;
+    picture = payload.picture || '';
+    googleSub = payload.sub;
+  } else {
+    email = req.body.email?.toLowerCase();
+    name = req.body.name || name;
+    googleSub = req.body.googleId || `legacy-${Date.now()}`;
+  }
+
+  if (!email) {
+    return res.status(400).json({ message: 'Google account email not available' });
+  }
+
+  let user = await User.findOne({ email });
+  let isNewUser = false;
+
+  if (!user) {
+    isNewUser = true;
+    user = await User.create({
+      name: name || 'Google User',
+      username: await buildUniqueUsername(name || 'user'),
+      email,
+      googleId: googleSub,
+      profilePicture: picture || '',
+      isVerified: true,
+    });
+  } else {
+    user.googleId = user.googleId || googleSub;
+    user.profilePicture = user.profilePicture || picture || '';
     user.isVerified = true;
-    user.otp = undefined;
-    user.otpExpiry = undefined;
     await user.save();
+  }
 
-    // Send welcome email
+  if (isNewUser) {
     try {
-      await sendWelcomeEmail(email, user.name);
-    } catch (emailError) {
-      console.error('Welcome email failed:', emailError.message);
+      await sendWelcomeEmail(user.email, user.name);
+    } catch (error) {
+      // ignore
     }
-
-    res.json({ message: 'Email verified successfully! Welcome to Kyro Social.' });
-  } catch (error) {
-    console.error('OTP verification error:', error);
-    res.status(500).json({ message: 'Server error during verification' });
   }
-};
 
-/**
- * POST /api/auth/resend-otp
- */
-exports.resendOTP = async (req, res) => {
+  res.status(200).json({
+    message: 'Google authentication successful',
+    token: generateToken(user._id, user.username),
+    user: sanitizeUser(user),
+  });
+});
+
+exports.forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email }).select('+otp +otpExpiry');
+  if (!user) {
+    return res.status(200).json({ message: 'If the account exists, a reset OTP has been sent', mailSent: false });
+  }
+
+  setOtpForUser(user);
+  await user.save();
+
+  let mailSent = false;
   try {
-    const { email } = req.body;
-
-    const user = await User.findOne({ email: email.toLowerCase() }).select('+otp +otpExpiry');
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    if (user.isVerified) {
-      return res.status(400).json({ message: 'Email already verified' });
-    }
-
-    const otp = generateOTP();
-    user.otp = otp;
-    user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
-    await user.save();
-
-    try {
-      await sendOTPEmail(email, user.name, otp);
-    } catch (emailError) {
-      console.error('Resend OTP email failed:', emailError.message);
-    }
-
-    res.json({ message: 'New verification code sent to your email.' });
+    await sendResetEmail(user.email, user.name, user.otp);
+    mailSent = true;
   } catch (error) {
-    console.error('Resend OTP error:', error);
-    res.status(500).json({ message: 'Server error' });
+    mailSent = false;
   }
-};
 
-/**
- * POST /api/auth/login
- */
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+  const payload = {
+    message: mailSent
+      ? 'Reset OTP sent to your email'
+      : 'Reset OTP generated but email delivery failed. Configure SMTP or Apps Script.',
+    mailSent,
+  };
 
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
-    }
-
-    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
-    }
-
-    if (user.authProvider === 'google' && !user.password) {
-      return res.status(400).json({ message: 'This account uses Google Sign-In. Please login with Google.' });
-    }
-
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' });
-    }
-
-    // Record login
-    const loginEntry = {
-      ip: req.ip || req.connection.remoteAddress,
-      userAgent: req.headers['user-agent'] || 'Unknown',
-      timestamp: new Date(),
-    };
-
-    user.lastLogin = new Date();
-    user.loginHistory = [...(user.loginHistory || []).slice(-9), loginEntry]; // Keep last 10
-    await user.save();
-
-    // Send security alert for new login
-    try {
-      await sendSecurityAlert(user.email, user.name, 'new_login', loginEntry);
-    } catch (emailError) {
-      console.error('Security alert email failed:', emailError.message);
-    }
-
-    const token = generateToken(user._id, user.username);
-
-    res.json({
-      message: 'Login successful',
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        username: user.username,
-        email: user.email,
-        isVerified: user.isVerified,
-        profilePicture: user.profilePicture,
-        coverPhoto: user.coverPhoto,
-        bio: user.bio,
-        followers: user.followers,
-        following: user.following,
-        joinedDate: user.joinedDate,
-      },
-    });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error during login' });
+  if (process.env.NODE_ENV !== 'production') {
+    payload.devOtp = user.otp;
   }
-};
 
-/**
- * POST /api/auth/google
- */
-exports.googleAuth = async (req, res) => {
-  try {
-    const { googleId, email, name, profilePicture } = req.body;
+  res.status(200).json(payload);
+});
 
-    if (!googleId || !email) {
-      return res.status(400).json({ message: 'Google authentication data is incomplete' });
-    }
+exports.resetPassword = asyncHandler(async (req, res) => {
+  const { email, otp, newPassword } = req.body;
 
-    let user = await User.findOne({ $or: [{ googleId }, { email: email.toLowerCase() }] });
-
-    if (user) {
-      // Existing user - update Google info if needed
-      if (!user.googleId) {
-        user.googleId = googleId;
-        user.authProvider = 'google';
-      }
-      if (!user.profilePicture && profilePicture) {
-        user.profilePicture = profilePicture;
-      }
-      user.isVerified = true;
-      user.lastLogin = new Date();
-      await user.save();
-    } else {
-      // New user via Google
-      const baseUsername = (name || 'user').toLowerCase().replace(/[^a-z0-9]/g, '') + Math.floor(Math.random() * 1000);
-      user = await User.create({
-        name,
-        username: baseUsername,
-        email: email.toLowerCase(),
-        googleId,
-        authProvider: 'google',
-        profilePicture: profilePicture || '',
-        isVerified: true,
-        joinedDate: new Date(),
-      });
-
-      // Send welcome email
-      try {
-        await sendWelcomeEmail(email, name);
-      } catch (emailError) {
-        console.error('Welcome email failed:', emailError.message);
-      }
-    }
-
-    const token = generateToken(user._id, user.username);
-
-    res.json({
-      message: 'Google authentication successful',
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        username: user.username,
-        email: user.email,
-        isVerified: user.isVerified,
-        profilePicture: user.profilePicture,
-        coverPhoto: user.coverPhoto,
-        bio: user.bio,
-        followers: user.followers,
-        following: user.following,
-        joinedDate: user.joinedDate,
-      },
-    });
-  } catch (error) {
-    console.error('Google auth error:', error);
-    res.status(500).json({ message: 'Server error during Google authentication' });
+  const user = await User.findOne({ email }).select('+otp +otpExpiry +password');
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
   }
-};
 
-/**
- * POST /api/auth/forgot-password
- */
-exports.forgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({ message: 'Email is required' });
-    }
-
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
-      // Don't reveal whether email exists
-      return res.json({ message: 'If an account with that email exists, we sent a reset code.' });
-    }
-
-    if (user.authProvider === 'google' && !user.password) {
-      return res.status(400).json({ message: 'This account uses Google Sign-In. No password to reset.' });
-    }
-
-    const otp = generateOTP();
-    user.resetToken = otp;
-    user.resetTokenExpiry = new Date(Date.now() + 10 * 60 * 1000);
-    await user.save();
-
-    try {
-      await sendResetEmail(email, user.name, otp);
-    } catch (emailError) {
-      console.error('Reset email failed:', emailError.message);
-    }
-
-    res.json({ message: 'If an account with that email exists, we sent a reset code.' });
-  } catch (error) {
-    console.error('Forgot password error:', error);
-    res.status(500).json({ message: 'Server error' });
+  if (!user.otp || user.otp !== otp || !user.otpExpiry || user.otpExpiry < new Date()) {
+    return res.status(400).json({ message: 'Invalid or expired OTP' });
   }
-};
 
-/**
- * POST /api/auth/reset-password
- */
-exports.resetPassword = async (req, res) => {
-  try {
-    const { email, otp, newPassword } = req.body;
+  user.password = newPassword;
+  user.otp = undefined;
+  user.otpExpiry = undefined;
+  await user.save();
 
-    if (!email || !otp || !newPassword) {
-      return res.status(400).json({ message: 'All fields are required' });
-    }
+  res.status(200).json({ message: 'Password reset successful' });
+});
 
-    if (newPassword.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters' });
-    }
-
-    const user = await User.findOne({ email: email.toLowerCase() }).select('+resetToken +resetTokenExpiry');
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    if (!user.resetToken || user.resetToken !== otp) {
-      return res.status(400).json({ message: 'Invalid reset code' });
-    }
-
-    if (new Date() > user.resetTokenExpiry) {
-      return res.status(400).json({ message: 'Reset code has expired' });
-    }
-
-    user.password = newPassword;
-    user.resetToken = undefined;
-    user.resetTokenExpiry = undefined;
-    await user.save();
-
-    // Send security alert
-    try {
-      await sendSecurityAlert(user.email, user.name, 'password_changed');
-    } catch (emailError) {
-      console.error('Security alert email failed:', emailError.message);
-    }
-
-    res.json({ message: 'Password reset successful. You can now login with your new password.' });
-  } catch (error) {
-    console.error('Reset password error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
-/**
- * GET /api/auth/me
- */
-exports.getMe = async (req, res) => {
-  try {
-    res.json({ user: req.user });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
+exports.getMe = asyncHandler(async (req, res) => {
+  res.status(200).json({ user: sanitizeUser(req.user) });
+});

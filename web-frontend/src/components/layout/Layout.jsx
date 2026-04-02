@@ -3,33 +3,40 @@ import Header from './Header';
 import Sidebar, { DRAWER_WIDTH } from './Sidebar';
 import BottomNav from './BottomNav';
 
+const HEADER_HEIGHT = { xs: 60, sm: 72 };
+
 const Layout = ({ children }) => {
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F5F5F7' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-color)' }}>
       <Header />
       <Sidebar />
+
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          pt: { xs: '56px', sm: '64px' },
-          pb: { xs: '76px', md: 3 },
+          minWidth: 0,
+          pt: { xs: `${HEADER_HEIGHT.xs}px`, sm: `${HEADER_HEIGHT.sm}px` },
+          pb: { xs: '84px', md: 4 },
           px: { xs: 1, sm: 2, md: 3 },
           ml: { xs: 0, md: `${DRAWER_WIDTH}px` },
-          maxWidth: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
+          mr: { xs: 0, md: `${DRAWER_WIDTH}px` },
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-start',
         }}
       >
         <Box
           sx={{
-            maxWidth: 680,
-            mx: 'auto',
             width: '100%',
-            py: 2,
+            maxWidth: 700,
+            py: { xs: 1.5, sm: 2.5 },
           }}
         >
           {children}
         </Box>
       </Box>
+
       <BottomNav />
     </Box>
   );

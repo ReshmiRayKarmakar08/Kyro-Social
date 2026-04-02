@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   Card,
-  CardContent,
   Box,
   Avatar,
   Typography,
@@ -11,6 +10,16 @@ import {
   Menu,
   MenuItem,
   ListItemIcon,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  CircularProgress,
+  List,
+  ListItemButton,
+  ListItemAvatar,
+  ListItemText,
 } from '@mui/material';
 import {
   ChatBubbleOutlineRounded,
@@ -21,6 +30,7 @@ import {
   FlagRounded,
   PersonRemoveRounded,
   LinkRounded,
+  DeleteRounded,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -31,287 +41,230 @@ import { useAuth } from '../../context/AuthContext';
 import logo from '../../assets/logo.png';
 import api from '../../api/axios';
 
-const PostCard = ({ post, onLike, onComment, index = 0 }) => {
+const PostCard = ({ post, onLike, onComment, onDelete, index = 0 }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [commentOpen, setCommentOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [saved, setSaved] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [likesDialogOpen, setLikesDialogOpen] = useState(false);
+  const [likers, setLikers] = useState([]);
+  const [loadingLikers, setLoadingLikers] = useState(false);
 
-  const isLiked = post.likes?.some(
-    (like) => like.username === user?.username
-  );
+  const isLiked = (post.likes || []).some((like) => like.username === user?.username);
   const isOwnPost = post.authorUsername === user?.username;
+  const likeCount = Number(post.likeCount || 0);
+  const commentCount = Number(post.commentCount || 0);
+  const shareCount = Number(post.shareCount || 0);
 
   const handleFollow = async () => {
-    setIsFollowing(!isFollowing);
+    setIsFollowing((prev) => !prev);
     try {
       await api.put(`/users/follow/${post.authorUsername}`);
-    } catch (err) {
-      setIsFollowing(!isFollowing); // revert
+    } catch {
+      setIsFollowing((prev) => !prev);
+    }
+  };
+
+  const handleFetchLikers = async () => {
+    setLikesDialogOpen(true);
+    setLoadingLikers(true);
+    try {
+      const res = await api.get(`/posts/${post._id}/likes`);
+      setLikers(res.data?.users || []);
+    } catch {
+      // error handling
+    } finally {
+      setLoadingLikers(false);
     }
   };
 
   const handleShare = async () => {
-    if (navigator.share) {
-      try {
+    try {
+      await api.post(`/posts/${post._id}/share`);
+      if (navigator.share) {
         await navigator.share({
           title: `Post by ${post.authorName}`,
           text: post.content?.substring(0, 100),
           url: window.location.href,
         });
-      } catch (err) {
-        // User cancelled or share failed
       }
-    } else {
-      navigator.clipboard.writeText(window.location.href);
+    } catch {
+      // ignore
     }
+  };
+
+  const handleDeleteClick = () => {
+    setMenuAnchor(null);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    setDeleteConfirmOpen(false);
+    onDelete(post._id);
   };
 
   return (
     <>
       <Card
         component={motion.div}
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: index * 0.06, ease: [0.25, 0.46, 0.45, 0.94] }}
-        sx={{ mb: 2, overflow: 'visible' }}
+        transition={{ duration: 0.4, delay: index * 0.04 }}
+        sx={{
+          mb: 2,
+          borderRadius: '16px',
+          bgcolor: 'background.paper',
+          border: (theme) => `1px solid ${theme.palette.divider}`,
+          boxShadow: (theme) => theme.palette.mode === 'light' ? '0 3px 14px rgba(0,0,0,0.02)' : 'none',
+          overflow: 'hidden',
+          '&:hover': { 
+            borderColor: (theme) => theme.palette.mode === 'light' ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.12)' 
+          },
+        }}
       >
-        <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2 } }}>
-          {/* Author Row */}
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+        <Box sx={{ p: 2.2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.6 }}>
             <Avatar
               src={post.authorAvatar || logo}
               onClick={() => navigate(`/profile/${post.authorUsername}`)}
-              sx={{
-                width: 42,
-                height: 42,
-                bgcolor: '#FF6154',
-                cursor: 'pointer',
-                transition: 'transform 0.2s',
-                '&:hover': { transform: 'scale(1.08)' },
-              }}
+              sx={{ width: 42, height: 42, bgcolor: '#FF6154', cursor: 'pointer' }}
             >
               {post.authorName?.charAt(0)}
             </Avatar>
-            <Box sx={{ ml: 1.5, flex: 1 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                <Typography
-                  variant="subtitle2"
-                  fontWeight={700}
-                  sx={{ cursor: 'pointer', '&:hover': { color: '#FF6154' }, transition: 'color 0.2s' }}
-                  onClick={() => navigate(`/profile/${post.authorUsername}`)}
-                >
+
+            <Box sx={{ ml: 1.4, flex: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, flexWrap: 'wrap' }}>
+                <Typography variant="subtitle2" fontWeight={800} sx={{ cursor: 'pointer', color: 'text.primary' }} onClick={() => navigate(`/profile/${post.authorUsername}`)}>
                   {post.authorName}
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>
                   @{post.authorUsername}
                 </Typography>
+                {post.type === 'promo' && (
+                  <Box sx={{ bgcolor: 'rgba(255,97,84,0.1)', color: '#FF6154', px: 1, py: 0.1, borderRadius: '4px', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase' }}>
+                    Promotion
+                  </Box>
+                )}
               </Box>
-              <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.72rem' }}>
+              <Typography variant="caption" sx={{ color: 'text.secondary', opacity: 0.8, fontWeight: 500 }}>
                 {formatDate(post.createdAt)}
               </Typography>
             </Box>
 
-            {!isOwnPost && (
-              <Button
-                variant={isFollowing ? 'outlined' : 'contained'}
-                size="small"
-                onClick={handleFollow}
-                component={motion.button}
-                whileTap={{ scale: 0.92 }}
-                sx={{
-                  borderRadius: 50,
-                  px: 2,
-                  py: 0.4,
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  minWidth: 'auto',
-                  ...(isFollowing && {
-                    borderColor: 'rgba(0,0,0,0.12)',
-                    color: '#6B7280',
-                    '&:hover': { borderColor: '#EF4444', color: '#EF4444', background: 'rgba(239,68,68,0.04)' },
-                  }),
-                }}
-                id="follow-button"
-              >
-                {isFollowing ? 'Following' : 'Follow'}
-              </Button>
-            )}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              {!isOwnPost && (
+                <Button
+                  variant={isFollowing ? 'outlined' : 'text'}
+                  size="small"
+                  onClick={handleFollow}
+                  sx={{ borderRadius: '10px', fontSize: '0.8rem', fontWeight: 700, textTransform: 'none' }}
+                >
+                  {isFollowing ? 'Following' : 'Follow'}
+                </Button>
+              )}
 
-            <IconButton
-              size="small"
-              sx={{ ml: 0.5, color: '#9CA3AF' }}
-              onClick={(e) => setMenuAnchor(e.currentTarget)}
-            >
-              <MoreHorizRounded fontSize="small" />
-            </IconButton>
+              <IconButton size="small" onClick={(e) => setMenuAnchor(e.currentTarget)}>
+                <MoreHorizRounded fontSize="small" />
+              </IconButton>
+            </Box>
 
-            {/* Post Options Menu */}
             <Menu
               anchorEl={menuAnchor}
               open={Boolean(menuAnchor)}
               onClose={() => setMenuAnchor(null)}
-              PaperProps={{
-                sx: {
-                  borderRadius: 3,
-                  minWidth: 180,
-                  boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
-                  border: '1px solid rgba(0,0,0,0.06)',
-                },
-              }}
+              PaperProps={{ sx: { borderRadius: '12px', minWidth: 180 } }}
             >
               <MenuItem onClick={() => { handleShare(); setMenuAnchor(null); }}>
                 <ListItemIcon><LinkRounded fontSize="small" /></ListItemIcon>
-                Copy Link
+                Copy post link
               </MenuItem>
+
+              {isOwnPost && (
+                <MenuItem onClick={handleDeleteClick} sx={{ color: '#EF4444' }}>
+                  <ListItemIcon><DeleteRounded fontSize="small" sx={{ color: '#EF4444' }} /></ListItemIcon>
+                  Delete post
+                </MenuItem>
+              )}
+
               {!isOwnPost && (
                 <MenuItem onClick={() => setMenuAnchor(null)}>
                   <ListItemIcon><PersonRemoveRounded fontSize="small" /></ListItemIcon>
-                  Unfollow
+                  Unfollow user
                 </MenuItem>
               )}
-              <MenuItem onClick={() => setMenuAnchor(null)} sx={{ color: 'error.main' }}>
-                <ListItemIcon><FlagRounded fontSize="small" color="error" /></ListItemIcon>
-                Report
+              <MenuItem onClick={() => setMenuAnchor(null)} sx={{ color: '#EF4444' }}>
+                <ListItemIcon><FlagRounded fontSize="small" sx={{ color: '#EF4444' }} /></ListItemIcon>
+                Report post
               </MenuItem>
             </Menu>
           </Box>
 
-          {/* Content */}
           {post.content && (
-            <Typography
-              variant="body1"
-              sx={{
-                mb: post.image ? 1.5 : 0.5,
-                color: '#1F2937',
-                lineHeight: 1.6,
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-word',
-              }}
-            >
+            <Typography variant="body1" sx={{ mb: post.image ? 1.6 : 1, color: 'text.primary', lineHeight: 1.65, whiteSpace: 'pre-wrap' }}>
               {post.content}
             </Typography>
           )}
 
-          {/* Image */}
           {post.image && (
-            <Box
-              component={motion.div}
-              whileHover={{ scale: 1.005 }}
-              sx={{
-                borderRadius: 3,
-                overflow: 'hidden',
-                mb: 1,
-                mx: -0.5,
-              }}
-            >
+            <Box sx={{ borderRadius: '12px', overflow: 'hidden', mb: 1.2 }}>
               <CardMedia
                 component="img"
                 image={post.image}
-                alt="Post image"
-                sx={{
-                  maxHeight: 420,
-                  objectFit: 'cover',
-                  width: '100%',
-                  borderRadius: 3,
-                  cursor: 'pointer',
-                }}
+                alt="Post content"
+                sx={{ maxHeight: 520, objectFit: 'cover', width: '100%', display: 'block' }}
               />
             </Box>
           )}
 
-          {/* Action Bar */}
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              mt: 1,
-              pt: 1,
-              borderTop: '1px solid rgba(0,0,0,0.04)',
-            }}
-          >
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1, pt: 1.2, borderTop: (theme) => `1px solid ${theme.palette.divider}` }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <LikeButton
-                liked={isLiked}
-                count={post.likeCount}
-                onToggle={() => onLike(post._id)}
-              />
+              <LikeButton liked={isLiked} count={post.likeCount} onToggle={() => onLike(post._id)} />
 
-              <motion.div
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
-                whileTap={{ scale: 0.8 }}
-              >
-                <IconButton
-                  size="small"
-                  onClick={() => setCommentOpen(true)}
-                  sx={{ color: '#9CA3AF', '&:hover': { color: '#FF6154' }, transition: 'color 0.2s' }}
-                  id="comment-button"
-                >
-                  <ChatBubbleOutlineRounded sx={{ fontSize: 20 }} />
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.4 }}>
+                <IconButton size="medium" onClick={() => setCommentOpen(true)} id="comment-button">
+                  <ChatBubbleOutlineRounded sx={{ fontSize: 21 }} />
                 </IconButton>
-                <Typography variant="caption" sx={{ color: '#9CA3AF', fontWeight: 600 }}>
+                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700 }}>
                   {post.commentCount || ''}
                 </Typography>
-              </motion.div>
+              </Box>
 
-              <motion.div whileTap={{ scale: 0.8 }}>
-                <IconButton
-                  size="small"
-                  onClick={handleShare}
-                  sx={{ color: '#9CA3AF', '&:hover': { color: '#FF6154' }, transition: 'color 0.2s' }}
-                >
-                  <ShareRounded sx={{ fontSize: 20 }} />
-                </IconButton>
-              </motion.div>
+              <IconButton size="medium" onClick={handleShare}>
+                <ShareRounded sx={{ fontSize: 21 }} />
+              </IconButton>
+              <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, ml: -0.8 }}>
+                {shareCount}
+              </Typography>
             </Box>
 
-            <motion.div whileTap={{ scale: 0.8 }}>
-              <IconButton
-                size="small"
-                onClick={() => setSaved(!saved)}
-                sx={{
-                  color: saved ? '#FF6154' : '#9CA3AF',
-                  transition: 'color 0.2s',
-                }}
-              >
-                {saved ? (
-                  <BookmarkRounded sx={{ fontSize: 20 }} />
-                ) : (
-                  <BookmarkBorderRounded sx={{ fontSize: 20 }} />
-                )}
-              </IconButton>
-            </motion.div>
+            <IconButton size="medium" onClick={() => setSaved((prev) => !prev)} sx={{ color: saved ? '#FF6154' : 'text.secondary' }}>
+              {saved ? <BookmarkRounded sx={{ fontSize: 21 }} /> : <BookmarkBorderRounded sx={{ fontSize: 21 }} />}
+            </IconButton>
           </Box>
 
-          {/* Engagement summary */}
-          {(post.likeCount > 0 || post.commentCount > 0) && (
-            <Box sx={{ display: 'flex', gap: 2, mt: 0.5 }}>
-              {post.likeCount > 0 && (
-                <Typography variant="caption" sx={{ color: '#6B7280', fontWeight: 600, fontSize: '0.76rem' }}>
-                  {post.likeCount} {post.likeCount === 1 ? 'Like' : 'Likes'}
-                </Typography>
-              )}
-              {post.commentCount > 0 && (
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: '#6B7280',
-                    fontWeight: 600,
-                    fontSize: '0.76rem',
-                    cursor: 'pointer',
-                    '&:hover': { color: '#FF6154' },
-                  }}
-                  onClick={() => setCommentOpen(true)}
-                >
-                  {post.commentCount} {post.commentCount === 1 ? 'Comment' : 'Comments'}
-                </Typography>
-              )}
-            </Box>
-          )}
-        </CardContent>
+          <Box sx={{ display: 'flex', gap: 1.6, mt: 1.1 }}>
+            <Typography 
+              variant="caption" 
+              sx={{ color: 'text.secondary', fontWeight: 700, cursor: 'pointer', '&:hover': { color: '#FF6154' } }}
+              onClick={handleFetchLikers}
+            >
+              {likeCount} {likeCount === 1 ? 'like' : 'likes'}
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{ color: 'text.secondary', fontWeight: 700, cursor: 'pointer', '&:hover': { color: '#FF6154' } }}
+              onClick={() => setCommentOpen(true)}
+            >
+              {commentCount} {commentCount === 1 ? 'comment' : 'comments'}
+            </Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700 }}>
+              {shareCount} shares
+            </Typography>
+          </Box>
+        </Box>
       </Card>
 
       <CommentDrawer
@@ -321,6 +274,78 @@ const PostCard = ({ post, onLike, onComment, index = 0 }) => {
         onAddComment={onComment}
         postId={post._id}
       />
+
+      <Dialog
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        PaperProps={{
+          sx: { borderRadius: '16px', p: 1 },
+        }}
+      >
+        <DialogTitle sx={{ fontWeight: 800 }}>Delete Post?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            This action cannot be undone. This post will be permanently removed from your profile and the feed.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ pb: 2, px: 2.5 }}>
+          <Button
+            onClick={() => setDeleteConfirmOpen(false)}
+            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 700, color: '#6B7280' }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmDelete}
+            variant="contained"
+            color="error"
+            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 700, boxShadow: 'none' }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={likesDialogOpen}
+        onClose={() => setLikesDialogOpen(false)}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 4, bgcolor: 'background.paper' } }}
+      >
+        <DialogTitle sx={{ fontWeight: 800, pb: 1 }}>Likes</DialogTitle>
+        <DialogContent sx={{ p: 0 }}>
+          <Box sx={{ maxHeight: 400, overflow: 'auto' }}>
+            {loadingLikers ? (
+              <Box sx={{ p: 4, textAlign: 'center' }}><CircularProgress size={24} /></Box>
+            ) : likers.length === 0 ? (
+              <Box sx={{ p: 4, textAlign: 'center' }}><Typography variant="body2" color="text.secondary">No likes yet</Typography></Box>
+            ) : (
+              <List>
+                {likers.map((u) => (
+                  <ListItemButton
+                    key={u.username}
+                    onClick={() => { setLikesDialogOpen(false); navigate(`/profile/${u.username}`); }}
+                    sx={{ px: 2.5, py: 1.2 }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar src={u.profilePicture || logo} sx={{ width: 40, height: 40 }} />
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={u.name}
+                      secondary={u.headline || `@${u.username}`}
+                      primaryTypographyProps={{ fontWeight: 700, fontSize: '0.9rem', color: 'text.primary' }}
+                      secondaryTypographyProps={{ fontSize: '0.8rem', color: 'text.secondary' }}
+                    />
+                  </ListItemButton>
+                ))}
+              </List>
+            )}
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 1.5 }}>
+          <Button onClick={() => setLikesDialogOpen(false)} fullWidth sx={{ fontWeight: 700 }}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

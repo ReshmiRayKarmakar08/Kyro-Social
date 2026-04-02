@@ -1,61 +1,45 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Box, Typography, Alert, Snackbar } from '@mui/material';
-import { AnimatePresence, motion } from 'framer-motion';
+import { Box, Typography, Alert, Snackbar, Card, Chip } from '@mui/material';
+import { motion } from 'framer-motion';
 import api from '../api/axios';
+import { io } from 'socket.io-client';
 import CreatePost from '../components/feed/CreatePost';
 import PostCard from '../components/feed/PostCard';
-import FeedTabs from '../components/feed/FeedTabs';
 import FeedSkeleton from '../components/feed/FeedSkeleton';
-import { mockPosts } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
+
+const PAGE_LIMIT = 10;
 
 const FeedPage = () => {
+  const { user } = useAuth();
   const [posts, setPosts] = useState([]);
   const [activeTab, setActiveTab] = useState('all');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [usingMockData, setUsingMockData] = useState(false);
 
-  // Alert / Snackbar state
   const [alert, setAlert] = useState({ open: false, message: '', severity: 'info' });
+  const [filterType, setFilterType] = useState('all');
 
-  const showAlert = (message, severity = 'error') => {
-    setAlert({ open: true, message, severity });
-  };
+  const showAlert = (message, severity = 'error') => setAlert({ open: true, message, severity });
 
   const fetchPosts = useCallback(async (pageNum = 1, filter = activeTab) => {
     try {
       if (pageNum === 1) setLoading(true);
       else setLoadingMore(true);
 
-      const res = await api.get(`/posts?filter=${filter}&page=${pageNum}&limit=10`);
-      const newPosts = res.data.posts;
+      const res = await api.get(`/posts?filter=${filter}&type=${filterType}&page=${pageNum}&limit=${PAGE_LIMIT}`);
+      const newPosts = res.data?.posts || [];
 
-      if (pageNum === 1) {
-        if (newPosts.length === 0) {
-          // No real posts yet -- fall back to mock data
-          setPosts(mockPosts);
-          setUsingMockData(true);
-          setHasMore(false);
-        } else {
-          setPosts(newPosts);
-          setUsingMockData(false);
-        }
-      } else {
-        setPosts((prev) => [...prev, ...newPosts]);
-      }
-      if (newPosts.length > 0) {
-        setHasMore(res.data.pagination?.hasMore ?? false);
-      }
+      if (pageNum === 1) setPosts(newPosts);
+      else setPosts((prev) => [...prev, ...newPosts]);
+
+      setHasMore(Boolean(res.data?.pagination?.hasMore));
     } catch (err) {
-      console.error('Feed fetch error:', err);
-      // On API failure, show mock data so the UI is never empty
-      if (pageNum === 1) {
-        setPosts(mockPosts);
-        setUsingMockData(true);
-        setHasMore(false);
-      }
+      if (pageNum === 1) setPosts([]);
+      setHasMore(false);
+      showAlert(err.response?.data?.message || 'Failed to fetch posts');
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -65,18 +49,15 @@ const FeedPage = () => {
   useEffect(() => {
     setPage(1);
     fetchPosts(1, activeTab);
-  }, [activeTab]);
+  }, [activeTab, filterType, fetchPosts]);
 
-  // Infinite scroll
   useEffect(() => {
-    if (usingMockData) return; // No infinite scroll with mock data
-
-    const handleScroll = () => {
+    const onScroll = () => {
       if (
-        window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight - 500 &&
+        window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 400 &&
         hasMore &&
-        !loadingMore
+        !loadingMore &&
+        !loading
       ) {
         setPage((prev) => {
           const next = prev + 1;
@@ -85,16 +66,43 @@ const FeedPage = () => {
         });
       }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [hasMore, loadingMore, activeTab, fetchPosts, usingMockData]);
 
-  // Create post
-  const handleCreatePost = async (formData) => {
-    if (usingMockData) {
-      showAlert('Sign up and start posting! Mock data is shown for preview.', 'info');
-      return;
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [hasMore, loadingMore, loading, fetchPosts, activeTab]);
+
+  useEffect(() => {
+    const apiBase = import.meta.env.VITE_API_URL || '/api';
+    let socketUrl = import.meta.env.VITE_SOCKET_URL;
+    if (!socketUrl) {
+      socketUrl = apiBase.startsWith('http')
+        ? apiBase.replace(/\/api\/?$/, '')
+        : 'http://localhost:5001';
     }
+
+    const socket = io(socketUrl, {
+      transports: ['websocket', 'polling'],
+      query: { username: user?.username || '' },
+    });
+
+    socket.on('post:liked', ({ postId, likeCount }) => {
+      setPosts((prev) => prev.map((p) => (
+        p._id === postId ? { ...p, likeCount } : p
+      )));
+    });
+
+    socket.on('post:commented', ({ postId, commentCount, comment }) => {
+      setPosts((prev) => prev.map((p) => (
+        p._id === postId
+          ? { ...p, commentCount, comments: [...(p.comments || []), comment] }
+          : p
+      )));
+    });
+
+    return () => socket.disconnect();
+  }, [user?.username]);
+
+  const handleCreatePost = async (formData) => {
     try {
       const res = await api.post('/posts', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -102,141 +110,152 @@ const FeedPage = () => {
       setPosts((prev) => [res.data.post, ...prev]);
       showAlert('Post published successfully!', 'success');
     } catch (err) {
-      console.error('Create post error:', err);
       const message = err.response?.data?.message || 'Failed to create post. Please try again.';
       showAlert(message);
       throw err;
     }
   };
 
-  // Optimistic like
   const handleLike = async (postId) => {
-    const user = JSON.parse(localStorage.getItem('kyro_user'));
+    const currentUser = JSON.parse(localStorage.getItem('kyro_user') || '{}');
 
-    setPosts((prev) =>
-      prev.map((post) => {
-        if (post._id !== postId) return post;
-        const alreadyLiked = post.likes?.some((l) => l.username === user?.username);
-        return {
-          ...post,
-          likeCount: alreadyLiked ? post.likeCount - 1 : post.likeCount + 1,
-          likes: alreadyLiked
-            ? post.likes.filter((l) => l.username !== user?.username)
-            : [...(post.likes || []), { username: user?.username, userId: user?.id }],
-        };
-      })
-    );
-
-    if (usingMockData) return; // Don't call API for mock data
+    setPosts((prev) => prev.map((post) => {
+      if (post._id !== postId) return post;
+      const alreadyLiked = (post.likes || []).some((l) => l.username === currentUser?.username);
+      return {
+        ...post,
+        likeCount: alreadyLiked ? Math.max(0, (post.likeCount || 0) - 1) : (post.likeCount || 0) + 1,
+        likes: alreadyLiked
+          ? (post.likes || []).filter((l) => l.username !== currentUser?.username)
+          : [...(post.likes || []), { username: currentUser?.username, userId: currentUser?.id }],
+      };
+    }));
 
     try {
       await api.put(`/posts/${postId}/like`);
-    } catch (err) {
-      // Revert on error
+    } catch {
       fetchPosts(1, activeTab);
     }
   };
 
-  // Optimistic comment
   const handleComment = async (postId, text) => {
-    if (!text.trim()) {
+    const message = text.trim();
+    if (!message) {
       showAlert('Comment cannot be empty.', 'warning');
       return;
     }
 
-    const user = JSON.parse(localStorage.getItem('kyro_user'));
-    const tempComment = {
-      _id: Date.now().toString(),
-      userId: user?.id,
-      username: user?.username || 'you',
-      userName: user?.name || 'You',
-      userAvatar: user?.profilePicture,
-      text,
+    const currentUser = JSON.parse(localStorage.getItem('kyro_user') || '{}');
+    const optimisticComment = {
+      _id: `temp-${Date.now()}`,
+      userId: currentUser?.id,
+      username: currentUser?.username || 'you',
+      userName: currentUser?.name || 'You',
+      userAvatar: currentUser?.profilePicture,
+      text: message,
       createdAt: new Date().toISOString(),
     };
 
-    setPosts((prev) =>
-      prev.map((post) =>
-        post._id === postId
-          ? {
-              ...post,
-              comments: [...(post.comments || []), tempComment],
-              commentCount: (post.commentCount || 0) + 1,
-            }
-          : post
-      )
-    );
-
-    if (usingMockData) return; // Don't call API for mock data
+    setPosts((prev) => prev.map((post) => {
+      if (post._id !== postId) return post;
+      return {
+        ...post,
+        comments: [...(post.comments || []), optimisticComment],
+        commentCount: (post.commentCount || 0) + 1,
+      };
+    }));
 
     try {
-      await api.post(`/posts/${postId}/comment`, { text });
-    } catch (err) {
+      await api.post(`/posts/${postId}/comment`, { text: message });
+    } catch {
       fetchPosts(1, activeTab);
       showAlert('Failed to add comment. Please try again.');
     }
   };
 
+  const handleDeletePost = async (postId) => {
+    try {
+      await api.delete(`/posts/${postId}`);
+      setPosts((prev) => prev.filter((post) => post._id !== postId));
+      showAlert('Post deleted successfully!', 'success');
+    } catch (err) {
+      showAlert(err.response?.data?.message || 'Failed to delete post. Please try again.');
+    }
+  };
+
   return (
     <Box>
-      <FeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
-      <CreatePost onSubmit={handleCreatePost} />
+      <Card
+        sx={{
+          mb: 1.5,
+          p: 1.2,
+          borderRadius: 3,
+          bgcolor: 'background.paper',
+          border: (theme) => `1px solid ${theme.palette.divider}`,
+          boxShadow: (theme) => theme.palette.mode === 'light' ? '0 2px 10px rgba(0,0,0,0.02)' : 'none',
+          display: 'flex',
+          gap: 0.8,
+          flexWrap: 'wrap',
+        }}
+      >
+        {[
+          { label: '#All Post', filter: 'all', type: 'all' },
+          { label: '#For You', filter: 'foryou', type: 'all' },
+          { label: '#Most Liked', filter: 'mostliked', type: 'all' },
+          { label: '#Most Commented', filter: 'mostcommented', type: 'all' },
+          { label: '#Most Shared', filter: 'mostshared', type: 'all' },
+          { label: '#Promotions', filter: 'all', type: 'promo' },
+        ].map((item) => {
+          const isActive = activeTab === item.filter && filterType === item.type;
+          return (
+            <Chip
+              key={item.label}
+              label={item.label}
+              size="small"
+              onClick={() => {
+                setActiveTab(item.filter);
+                setFilterType(item.type);
+              }}
+              sx={{
+                borderRadius: '999px',
+                fontWeight: 700,
+                bgcolor: isActive ? '#FF6154' : 'rgba(255,97,84,0.08)',
+                color: isActive ? '#FFFFFF' : '#FF6154',
+                '&:hover': {
+                  bgcolor: isActive ? '#FF6154' : 'rgba(255,97,84,0.15)',
+                },
+              }}
+            />
+          );
+        })}
+      </Card>
 
-      {/* Mock data banner */}
-      {usingMockData && (
-        <Alert
-          severity="info"
-          sx={{
-            mb: 2,
-            borderRadius: 3,
-            fontSize: '0.82rem',
-            '& .MuiAlert-icon': { fontSize: 20 },
-          }}
-          id="mock-data-alert"
-        >
-          Showing sample posts for preview. Create your first post to get started!
-        </Alert>
-      )}
+      <CreatePost onSubmit={handleCreatePost} />
 
       {loading ? (
         <FeedSkeleton count={3} />
       ) : posts.length === 0 ? (
-        <Box
-          component={motion.div}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          sx={{ textAlign: 'center', py: 8 }}
-        >
-          <Typography variant="h6" color="text.secondary" fontWeight={600}>
-            No posts yet
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            Be the first to share something!
+        <Box component={motion.div} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} sx={{ textAlign: 'center', py: 8 }}>
+          <Typography variant="h6" color="text.secondary" fontWeight={700}>
+            No posts found. Be the first to share your journey!
           </Typography>
         </Box>
       ) : (
         <Box>
           {posts.map((post, index) => (
-            <PostCard
-              key={post._id}
-              post={post}
-              onLike={handleLike}
-              onComment={handleComment}
-              index={index}
-            />
+            <PostCard key={post._id} post={post} onLike={handleLike} onComment={handleComment} onDelete={handleDeletePost} index={index} />
           ))}
         </Box>
       )}
 
       {loadingMore && <FeedSkeleton count={1} />}
 
-      {/* Alert Snackbar */}
       <Snackbar
         open={alert.open}
         autoHideDuration={4000}
         onClose={() => setAlert((prev) => ({ ...prev, open: false }))}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        sx={{ bottom: { xs: 90, md: 24 } }}
+        sx={{ bottom: { xs: 90, md: 32 } }}
       >
         <Alert
           onClose={() => setAlert((prev) => ({ ...prev, open: false }))}

@@ -1,22 +1,23 @@
 import { useState, useRef } from 'react';
 import {
-  Card,
-  CardContent,
   Box,
   Avatar,
   TextField,
   Button,
   IconButton,
-  Chip,
   CircularProgress,
   Alert,
   Collapse,
+  Typography,
+  ToggleButtonGroup,
+  ToggleButton,
 } from '@mui/material';
 import {
   ImageRounded,
   CloseRounded,
-  SendRounded,
   EmojiEmotionsOutlined,
+  FormatListBulletedRounded,
+  CampaignRounded,
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
@@ -30,12 +31,12 @@ const CreatePost = ({ onSubmit }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [focused, setFocused] = useState(false);
+  const [postMode, setPostMode] = useState('all');
   const fileRef = useRef(null);
 
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         setError('Image size must be less than 5MB.');
         return;
@@ -54,21 +55,23 @@ const CreatePost = ({ onSubmit }) => {
 
   const handleSubmit = async () => {
     if ((!content.trim() && !image) || loading) {
-      if (!content.trim() && !image) {
-        setError('Write something or add an image to post.');
-      }
+      if (!content.trim() && !image) setError('Write something or add an image to post.');
       return;
     }
+
     setLoading(true);
     setError('');
+
     try {
       const formData = new FormData();
       if (content.trim()) formData.append('content', content.trim());
       if (image) formData.append('image', image);
+      formData.append('type', postMode);
       await onSubmit(formData);
       setContent('');
       removeImage();
       setFocused(false);
+      setPostMode('all');
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to publish post.');
     } finally {
@@ -77,187 +80,187 @@ const CreatePost = ({ onSubmit }) => {
   };
 
   return (
-    <Card
+    <Box
       component={motion.div}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
+      transition={{ duration: 0.3 }}
       sx={{
         mb: 2,
-        overflow: 'visible',
-        transition: 'box-shadow 0.3s ease',
-        ...(focused && {
-          boxShadow: '0 0 0 2px rgba(255, 97, 84, 0.15), 0 20px 40px rgba(45, 49, 66, 0.08)',
-        }),
+        bgcolor: 'background.paper',
+        borderRadius: '16px',
+        border: (theme) => `1px solid ${theme.palette.divider}`,
+        p: 2.25,
+        transition: 'all 0.3s ease',
+        position: 'relative',
+        zIndex: focused ? 10 : 1,
+        boxShadow: focused ? '0 16px 36px rgba(0,0,0,0.08)' : '0 3px 14px rgba(0,0,0,0.02)',
       }}
     >
-      <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2 } }}>
-        <Box sx={{ display: 'flex', gap: 1.5 }}>
-          <Avatar
-            src={user?.profilePicture || logo}
-            sx={{ width: 42, height: 42, bgcolor: '#FF6154', flexShrink: 0 }}
-          >
-            {user?.name?.charAt(0)}
-          </Avatar>
-          <Box sx={{ flex: 1 }}>
-            <TextField
-              fullWidth
-              multiline
-              maxRows={6}
-              placeholder="What's on your mind?"
-              value={content}
-              onChange={(e) => { setContent(e.target.value); setError(''); }}
-              onFocus={() => setFocused(true)}
-              onBlur={() => !content && !image && setFocused(false)}
-              variant="standard"
-              InputProps={{
-                disableUnderline: true,
-                sx: { fontSize: '0.95rem', lineHeight: 1.5, py: 0.5 },
-              }}
-              id="create-post-input"
-            />
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.4 }}>
+        <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '-0.02em', color: 'text.primary' }}>
+          Create Post
+        </Typography>
+        <ToggleButtonGroup
+          size="small"
+          exclusive
+          value={postMode}
+          onChange={(_, val) => val && setPostMode(val)}
+          sx={{
+            bgcolor: '#F3F4F6',
+            borderRadius: '999px',
+            p: '2px',
+            '& .MuiToggleButton-root': {
+              border: 'none',
+              borderRadius: '999px',
+              px: 1.4,
+              py: 0.45,
+              color: '#9CA3AF',
+              fontWeight: 700,
+              fontSize: '0.75rem',
+              textTransform: 'none',
+            },
+            '& .MuiToggleButton-root.Mui-selected': {
+              bgcolor: '#FF6154',
+              color: '#fff',
+              '&:hover': { bgcolor: '#FF6154' },
+            },
+          }}
+        >
+          <ToggleButton value="all">All Posts</ToggleButton>
+          <ToggleButton value="promo">Promotions</ToggleButton>
+        </ToggleButtonGroup>
+      </Box>
 
-            {/* Validation error */}
-            <Collapse in={!!error}>
-              <Alert
-                severity="warning"
-                onClose={() => setError('')}
-                sx={{
-                  mt: 1,
-                  borderRadius: 2,
-                  fontSize: '0.8rem',
-                  py: 0,
-                  '& .MuiAlert-icon': { fontSize: 18 },
-                }}
-              >
-                {error}
-              </Alert>
-            </Collapse>
+      <Box sx={{ display: 'flex', gap: 2 }}>
+        <Avatar src={user?.profilePicture || logo} sx={{ width: 44, height: 44, bgcolor: '#FF6154', flexShrink: 0 }}>
+          {user?.name?.charAt(0)}
+        </Avatar>
 
-            {/* Image Preview */}
-            <AnimatePresence>
-              {preview && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.25 }}
-                >
-                  <Box
+        <Box sx={{ flex: 1 }}>
+          <TextField
+            fullWidth
+            multiline
+            maxRows={12}
+            placeholder="What's on your mind?"
+            value={content}
+            onChange={(e) => { setContent(e.target.value); setError(''); }}
+            onFocus={() => setFocused(true)}
+            onBlur={() => !content && !image && setFocused(false)}
+            variant="standard"
+            InputProps={{
+              disableUnderline: true,
+              sx: {
+                fontSize: '1rem',
+                lineHeight: 1.6,
+                color: 'text.primary',
+                pt: 0.2,
+                '&::placeholder': { color: 'text.secondary', opacity: 0.7 },
+              },
+            }}
+            id="create-post-input"
+          />
+
+          <Collapse in={!!error}>
+            <Alert
+              severity="warning"
+              variant="outlined"
+              onClose={() => setError('')}
+              sx={{ mt: 1.3, borderRadius: '10px', fontSize: '0.82rem' }}
+            >
+              {error}
+            </Alert>
+          </Collapse>
+
+          <AnimatePresence>
+            {preview && (
+              <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}>
+                <Box sx={{ position: 'relative', mt: 1.6, borderRadius: '12px', overflow: 'hidden', maxHeight: 380 }}>
+                  <img src={preview} alt="Preview" style={{ width: '100%', maxHeight: 380, objectFit: 'cover', display: 'block' }} />
+                  <IconButton
+                    onClick={removeImage}
+                    size="small"
                     sx={{
-                      position: 'relative',
-                      mt: 1.5,
-                      borderRadius: 3,
-                      overflow: 'hidden',
-                      maxHeight: 300,
+                      position: 'absolute',
+                      top: 8,
+                      right: 8,
+                      backgroundColor: 'rgba(0,0,0,0.5)',
+                      color: '#fff',
+                      '&:hover': { backgroundColor: 'rgba(0,0,0,0.72)' },
                     }}
                   >
-                    <img
-                      src={preview}
-                      alt="Preview"
-                      style={{
-                        width: '100%',
-                        maxHeight: 300,
-                        objectFit: 'cover',
-                        borderRadius: 12,
-                      }}
-                    />
-                    <IconButton
-                      onClick={removeImage}
-                      size="small"
-                      sx={{
-                        position: 'absolute',
-                        top: 8,
-                        right: 8,
-                        backgroundColor: 'rgba(0,0,0,0.6)',
-                        color: '#fff',
-                        '&:hover': { backgroundColor: 'rgba(0,0,0,0.8)' },
-                      }}
-                    >
-                      <CloseRounded fontSize="small" />
-                    </IconButton>
-                  </Box>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    <CloseRounded fontSize="small" />
+                  </IconButton>
+                </Box>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-            {/* Actions */}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                mt: 1.5,
-                pt: 1,
-              }}
-            >
-              <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
-                <input
-                  type="file"
-                  accept="image/*"
-                  hidden
-                  ref={fileRef}
-                  onChange={handleImageSelect}
-                />
-                <IconButton
-                  onClick={() => fileRef.current?.click()}
-                  size="small"
-                  component={motion.button}
-                  whileTap={{ scale: 0.85 }}
-                  sx={{ color: '#FF6154' }}
-                  id="image-upload-button"
-                >
-                  <ImageRounded sx={{ fontSize: 22 }} />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  component={motion.button}
-                  whileTap={{ scale: 0.85 }}
-                  sx={{ color: '#9CA3AF' }}
-                >
-                  <EmojiEmotionsOutlined sx={{ fontSize: 22 }} />
-                </IconButton>
-                {image && (
-                  <Chip
-                    label="1 image"
-                    size="small"
-                    onDelete={removeImage}
-                    sx={{ fontSize: '0.75rem', height: 26 }}
-                  />
-                )}
-              </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              mt: focused || content || preview ? 1.6 : 0.8,
+              pt: focused || content || preview ? 1.4 : 0,
+              borderTop: focused || content || preview ? '1px solid rgba(0,0,0,0.05)' : 'none',
+            }}
+          >
+            <Box sx={{ display: 'flex', gap: 0.8 }}>
+              <input type="file" accept="image/*" hidden ref={fileRef} onChange={handleImageSelect} />
+              <IconButton onClick={() => fileRef.current?.click()} sx={{ color: '#FF6154' }} id="image-upload-button">
+                <ImageRounded sx={{ fontSize: 22 }} />
+              </IconButton>
+              <IconButton sx={{ color: '#6B7280' }}>
+                <EmojiEmotionsOutlined sx={{ fontSize: 22 }} />
+              </IconButton>
+              <IconButton sx={{ color: '#6B7280' }}>
+                <FormatListBulletedRounded sx={{ fontSize: 21 }} />
+              </IconButton>
               <Button
-                variant="contained"
                 size="small"
-                onClick={handleSubmit}
-                disabled={(!content.trim() && !image) || loading}
-                component={motion.button}
-                whileTap={{ scale: 0.92 }}
-                endIcon={
-                  loading ? (
-                    <CircularProgress size={14} sx={{ color: '#fff' }} />
-                  ) : (
-                    <SendRounded sx={{ fontSize: '16px !important' }} />
-                  )
-                }
-                sx={{
-                  borderRadius: 50,
-                  px: 2.5,
-                  py: 0.7,
-                  fontSize: '0.82rem',
-                  fontWeight: 600,
-                  textTransform: 'none',
-                  minWidth: 90,
+                startIcon={<CampaignRounded sx={{ fontSize: 18 }} />}
+                onClick={() => {
+                  setContent((prev) => `${prev}${prev ? ' ' : ''}#Promote`);
+                  setPostMode('promo');
                 }}
-                id="post-submit-button"
+                sx={{
+                  borderRadius: '999px',
+                  textTransform: 'none',
+                  fontWeight: 700,
+                  color: '#FF6154',
+                  px: 1,
+                  minWidth: 0,
+                  bgcolor: postMode === 'promo' ? 'rgba(255,97,84,0.1)' : 'transparent',
+                }}
               >
-                {loading ? 'Posting' : 'Post'}
+                Promote
               </Button>
             </Box>
+
+            <Button
+              variant="contained"
+              disableElevation
+              onClick={handleSubmit}
+              disabled={(!content.trim() && !image) || loading}
+              sx={{
+                borderRadius: '999px',
+                px: 3,
+                py: 0.9,
+                fontSize: '0.88rem',
+                fontWeight: 700,
+                textTransform: 'none',
+                bgcolor: (!content.trim() && !image) ? '#E5E7EB' : undefined,
+                color: (!content.trim() && !image) ? '#9CA3AF' : undefined,
+              }}
+              id="post-submit-button"
+            >
+              {loading ? <CircularProgress size={18} sx={{ color: 'rgba(0,0,0,0.25)' }} /> : 'Publish Post'}
+            </Button>
           </Box>
         </Box>
-      </CardContent>
-    </Card>
+      </Box>
+    </Box>
   );
 };
 

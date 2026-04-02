@@ -30,15 +30,22 @@ const FeedTabs = ({ activeTab, onTabChange }) => {
         scrollButtons="auto"
         allowScrollButtonsMobile
         sx={{
-          minHeight: 48,
+          minHeight: 52,
+          px: 0.7,
+          py: 0.35,
+          '& .MuiTabs-indicator': { display: 'none' },
           '& .MuiTab-root': {
-            minHeight: 48,
+            minHeight: 40,
+            borderRadius: '999px',
+            mr: 0.7,
             color: '#9CA3AF',
-            fontWeight: 600,
-            fontSize: '0.85rem',
+            fontWeight: 700,
+            fontSize: '0.8rem',
             textTransform: 'none',
+            px: 1.8,
             '&.Mui-selected': {
-              color: '#FF6154',
+              color: '#FFFFFF',
+              bgcolor: '#FF6154',
             },
           },
         }}

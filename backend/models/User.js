@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Name is required'],
       trim: true,
-      maxlength: [50, 'Name cannot exceed 50 characters'],
+      maxlength: 60,
     },
     username: {
       type: String,
@@ -15,9 +15,9 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
-      minlength: [3, 'Username must be at least 3 characters'],
-      maxlength: [30, 'Username cannot exceed 30 characters'],
-      match: [/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'],
+      minlength: 3,
+      maxlength: 30,
+      match: [/^[a-z0-9_]+$/, 'Username can only contain lowercase letters, numbers, and underscores'],
     },
     email: {
       type: String,
@@ -25,12 +25,17 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
-      match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email'],
+      match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email address'],
     },
     password: {
       type: String,
-      minlength: [6, 'Password must be at least 6 characters'],
+      minlength: 6,
       select: false,
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
     },
     profilePicture: {
       type: String,
@@ -40,10 +45,24 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    website: {
+      type: String,
+      default: '',
+    },
+    headline: {
+      type: String,
+      default: '',
+      maxlength: 100,
+    },
+    location: {
+      type: String,
+      default: '',
+      maxlength: 80,
+    },
     bio: {
       type: String,
-      maxlength: [160, 'Bio cannot exceed 160 characters'],
       default: '',
+      maxlength: 160,
     },
     isVerified: {
       type: Boolean,
@@ -57,78 +76,101 @@ const userSchema = new mongoose.Schema(
       type: Date,
       select: false,
     },
-    resetToken: {
-      type: String,
-      select: false,
-    },
-    resetTokenExpiry: {
-      type: Date,
-      select: false,
-    },
-    googleId: {
-      type: String,
-      sparse: true,
-    },
-    authProvider: {
-      type: String,
-      enum: ['local', 'google'],
-      default: 'local',
-    },
     followers: [
       {
-        type: String, // store usernames
+        type: String,
+        lowercase: true,
+        trim: true,
       },
     ],
     following: [
       {
-        type: String, // store usernames
+        type: String,
+        lowercase: true,
+        trim: true,
       },
     ],
     joinedDate: {
       type: Date,
       default: Date.now,
     },
-    lastLogin: {
-      type: Date,
-    },
-    loginHistory: [
+    notifications: [
       {
-        ip: String,
-        userAgent: String,
-        timestamp: { type: Date, default: Date.now },
+        type: {
+          type: String,
+          enum: ['like', 'comment', 'follow', 'message'],
+          required: true,
+        },
+        fromUsername: {
+          type: String,
+          trim: true,
+          lowercase: true,
+        },
+        postId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Post',
+        },
+        text: {
+          type: String,
+          default: '',
+          maxlength: 240,
+        },
+        isRead: {
+          type: Boolean,
+          default: false,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
       },
     ],
+    settings: {
+      privacy: {
+        isPrivateAccount: { type: Boolean, default: false },
+        allowTagsFrom: { type: String, enum: ['everyone', 'followers', 'no_one'], default: 'everyone' },
+        allowMentionsFrom: { type: String, enum: ['everyone', 'followers', 'no_one'], default: 'everyone' },
+      },
+      interactions: {
+        allowCommentsFrom: { type: String, enum: ['everyone', 'followers', 'no_one'], default: 'everyone' },
+        showLikeCounts: { type: Boolean, default: true },
+        allowMessageRequests: { type: Boolean, default: true },
+      },
+      safety: {
+        hiddenWordsEnabled: { type: Boolean, default: false },
+        hiddenWords: [{ type: String, trim: true, lowercase: true }],
+        restrictedUsernames: [{ type: String, trim: true, lowercase: true }],
+        blockedUsernames: [{ type: String, trim: true, lowercase: true }],
+        mutedUsernames: [{ type: String, trim: true, lowercase: true }],
+      },
+      app: {
+        language: { type: String, default: 'en' },
+        appearance: { type: String, enum: ['system', 'light', 'dark'], default: 'light' },
+        reducedMotion: { type: Boolean, default: false },
+      },
+      notifications: {
+        likes: { type: Boolean, default: true },
+        comments: { type: Boolean, default: true },
+        follows: { type: Boolean, default: true },
+        messages: { type: Boolean, default: true },
+      },
+    },
   },
-  {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-  }
+  { timestamps: true }
 );
 
-// Virtual: follower & following counts
-userSchema.virtual('followerCount').get(function () {
-  return this.followers ? this.followers.length : 0;
-});
-userSchema.virtual('followingCount').get(function () {
-  return this.following ? this.following.length : 0;
-});
+userSchema.pre('save', async function passwordHashHook(next) {
+  if (!this.isModified('password') || !this.password) {
+    return next();
+  }
 
-// Pre-save: hash password
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password') || !this.password) return next();
   const salt = await bcrypt.genSalt(12);
   this.password = await bcrypt.hash(this.password, salt);
-  next();
+  return next();
 });
 
-// Method: compare passwords
-userSchema.methods.comparePassword = async function (candidatePassword) {
+userSchema.methods.comparePassword = function comparePassword(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Index for search
-userSchema.index({ name: 'text', username: 'text' });
-
-const User = mongoose.model('User', userSchema);
-module.exports = User;
+module.exports = mongoose.model('User', userSchema);
