@@ -113,11 +113,11 @@ const CreatePost = ({ onSubmit }) => {
             '& .MuiToggleButton-root': {
               border: 'none',
               borderRadius: '999px',
-              px: 1.4,
+              px: { xs: 1, sm: 1.4 },
               py: 0.45,
               color: 'text.secondary',
               fontWeight: 700,
-              fontSize: '0.75rem',
+              fontSize: { xs: '0.68rem', sm: '0.75rem' },
               textTransform: 'none',
             },
             '& .MuiToggleButton-root.Mui-selected': {
@@ -199,14 +199,16 @@ const CreatePost = ({ onSubmit }) => {
           <Box
             sx={{
               display: 'flex',
-              alignItems: 'center',
+              alignItems: { xs: 'stretch', sm: 'center' },
               justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              rowGap: 1,
               mt: focused || content || preview ? 1.6 : 0.8,
               pt: focused || content || preview ? 1.4 : 0,
               borderTop: focused || content || preview ? (theme) => `1px solid ${theme.palette.divider}` : 'none',
             }}
           >
-            <Box sx={{ display: 'flex', gap: 0.8 }}>
+            <Box sx={{ display: 'flex', gap: 0.6, flexWrap: 'wrap', alignItems: 'center', minWidth: 0 }}>
               <input type="file" accept="image/*" hidden ref={fileRef} onChange={handleImageSelect} />
               <IconButton onClick={() => fileRef.current?.click()} sx={{ color: '#FF6154' }} id="image-upload-button">
                 <ImageRounded sx={{ fontSize: 22 }} />
@@ -228,8 +230,9 @@ const CreatePost = ({ onSubmit }) => {
                   borderRadius: '999px',
                   textTransform: 'none',
                   fontWeight: 700,
+                  fontSize: '0.78rem',
                   color: '#FF6154',
-                  px: 1,
+                  px: 0.8,
                   minWidth: 0,
                   bgcolor: postMode === 'promo' ? 'rgba(255,97,84,0.1)' : 'transparent',
                 }}
@@ -245,11 +248,13 @@ const CreatePost = ({ onSubmit }) => {
               disabled={(!content.trim() && !image) || loading}
               sx={{
                 borderRadius: '999px',
-                px: 3,
+                px: { xs: 2, sm: 3 },
                 py: 0.9,
                 fontSize: '0.88rem',
                 fontWeight: 700,
                 textTransform: 'none',
+                width: { xs: '100%', sm: 'auto' },
+                mt: { xs: 0.5, sm: 0 },
                 bgcolor: (!content.trim() && !image) ? '#E5E7EB' : undefined,
                 color: (!content.trim() && !image) ? '#9CA3AF' : undefined,
               }}

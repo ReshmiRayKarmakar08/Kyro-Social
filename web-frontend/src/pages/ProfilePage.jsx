@@ -158,11 +158,12 @@ const ProfilePage = () => {
   };
 
   const handleFollow = async () => {
+    const wasFollowing = isFollowing;
     setIsFollowing((prev) => !prev);
     setProfile((prev) => {
       if (!prev) return prev;
       const followers = prev.followers || [];
-      const updatedFollowers = isFollowing
+      const updatedFollowers = wasFollowing
         ? followers.filter((u) => u !== currentUser?.username)
         : [...followers, currentUser?.username];
       return { ...prev, followers: updatedFollowers };
@@ -171,6 +172,10 @@ const ProfilePage = () => {
     try {
       const res = await api.put(`/users/follow/${username}`);
       setIsFollowing(res.data.isFollowing);
+      const nextFollowing = res.data.isFollowing
+        ? [...new Set([...(currentUser?.following || []), username])]
+        : (currentUser?.following || []).filter((u) => u !== username);
+      updateUser({ following: nextFollowing });
     } catch {
       setIsFollowing((prev) => !prev);
       setAlert({ open: true, message: 'Failed to update follow status.', severity: 'error' });

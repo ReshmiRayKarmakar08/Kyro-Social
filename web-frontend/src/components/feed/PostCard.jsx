@@ -43,10 +43,10 @@ import logo from '../../assets/logo.png';
 import api from '../../api/axios';
 
 const PostCard = ({ post, onLike, onComment, onDelete, onSave, onDeleteComment, index = 0 }) => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const navigate = useNavigate();
   const [commentOpen, setCommentOpen] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [likesDialogOpen, setLikesDialogOpen] = useState(false);
@@ -59,13 +59,31 @@ const PostCard = ({ post, onLike, onComment, onDelete, onSave, onDeleteComment, 
   const commentCount = Number(post.commentCount || 0);
   const shareCount = Number(post.shareCount || 0);
   const isSaved = Boolean(post.isSaved);
+  const isFollowing = Boolean(user?.following?.includes?.(post.authorUsername));
 
   const handleFollow = async () => {
-    setIsFollowing((prev) => !prev);
+    if (followLoading) return;
+    setFollowLoading(true);
+
+    const wasFollowing = isFollowing;
+    const nextFollowing = wasFollowing
+      ? (user?.following || []).filter((u) => u !== post.authorUsername)
+      : [...new Set([...(user?.following || []), post.authorUsername])];
+
+    updateUser({ following: nextFollowing });
+
     try {
-      await api.put(`/users/follow/${post.authorUsername}`);
+      const res = await api.put(`/users/follow/${post.authorUsername}`);
+      if (typeof res.data?.isFollowing === 'boolean') {
+        const correctedFollowing = res.data.isFollowing
+          ? [...new Set([...(user?.following || []).filter((u) => u !== post.authorUsername), post.authorUsername])]
+          : (user?.following || []).filter((u) => u !== post.authorUsername);
+        updateUser({ following: correctedFollowing });
+      }
     } catch {
-      setIsFollowing((prev) => !prev);
+      updateUser({ following: user?.following || [] });
+    } finally {
+      setFollowLoading(false);
     }
   };
 
@@ -162,6 +180,7 @@ const PostCard = ({ post, onLike, onComment, onDelete, onSave, onDeleteComment, 
                     variant={isFollowing ? 'outlined' : 'text'}
                     size="small"
                     onClick={handleFollow}
+                    disabled={followLoading}
                     sx={{ borderRadius: '10px', fontSize: '0.8rem', fontWeight: 700, textTransform: 'none' }}
                   >
                     {isFollowing ? 'Following' : 'Follow'}
