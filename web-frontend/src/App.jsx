@@ -36,6 +36,15 @@ const PublicRoute = ({ children }) => {
   return children;
 };
 
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) return <FullScreenLoader />;
+  if (!isAuthenticated) return <Navigate to="/auth" replace />;
+
+  return children;
+};
+
 const AppRoutes = () => (
   <Routes>
     <Route
@@ -47,7 +56,14 @@ const AppRoutes = () => (
       }
     />
 
-    <Route path="/" element={<AppShell />}>
+    <Route
+      path="/"
+      element={
+        <ProtectedRoute>
+          <AppShell />
+        </ProtectedRoute>
+      }
+    >
       <Route index element={<FeedPage />} />
       <Route path="search" element={<SearchPage />} />
       <Route path="explore" element={<SearchPage />} />
