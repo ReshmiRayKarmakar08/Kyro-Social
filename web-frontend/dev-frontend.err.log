@@ -2033,3 +2033,154 @@ AggregateError [ECONNREFUSED]:
 AggregateError [ECONNREFUSED]: 
     at internalConnectMultiple (node:net:1139:18)
     at afterConnectMultiple (node:net:1712:7)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:49 pm[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m8:40:51 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3nf234d[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:51 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3nfhbwk[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:51 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3nfiq8f[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:51 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3nfipju[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:51 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3nflykq[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:52 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3nfimfs[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:52 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3nfmwhf[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:52 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3no0vu8[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:52 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3ovw8x4[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:52 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3ovv9te[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:52 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3ow7551[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:52 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3ozvjgp[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:52 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3ovbl4h[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:53 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3p0hi1s[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:53 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3p2awcn[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:53 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3ozjekw[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:53 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3p0v3qf[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:53 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3p0aua8[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:53 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3p0kprd[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:53 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3p17si0[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:53 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=niloy&EIO=4&transport=polling&t=m3oxx4b4[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
+[2m8:40:53 pm[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /socket.io/?username=guest_user&EIO=4&transport=polling&t=m3pso0w7[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1712:7)
