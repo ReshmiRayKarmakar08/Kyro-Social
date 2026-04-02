@@ -1,0 +1,63 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #F5F5F7;
+  color: #1A1A2E;
+  overflow-x: hidden;
+}
+
+/* Hide scrollbar but keep functionality */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Remove blue highlight on mobile tap */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth image rendering */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Link resets */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Input reset */
+input, textarea {
+  font-family: inherit;
+}
+
+/* Selection color */
+::selection {
+  background-color: rgba(255, 97, 84, 0.2);
+  color: #1A1A2E;
+}
