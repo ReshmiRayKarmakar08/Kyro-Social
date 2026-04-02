@@ -4,16 +4,19 @@ import {
   CardContent,
   Box,
   Avatar,
-  Typography,
   TextField,
   Button,
   IconButton,
   Chip,
+  CircularProgress,
+  Alert,
+  Collapse,
 } from '@mui/material';
 import {
   ImageRounded,
   CloseRounded,
   SendRounded,
+  EmojiEmotionsOutlined,
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
@@ -25,13 +28,21 @@ const CreatePost = ({ onSubmit }) => {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [focused, setFocused] = useState(false);
   const fileRef = useRef(null);
 
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Image size must be less than 5MB.');
+        return;
+      }
       setImage(file);
       setPreview(URL.createObjectURL(file));
+      setError('');
     }
   };
 
@@ -42,8 +53,14 @@ const CreatePost = ({ onSubmit }) => {
   };
 
   const handleSubmit = async () => {
-    if ((!content.trim() && !image) || loading) return;
+    if ((!content.trim() && !image) || loading) {
+      if (!content.trim() && !image) {
+        setError('Write something or add an image to post.');
+      }
+      return;
+    }
     setLoading(true);
+    setError('');
     try {
       const formData = new FormData();
       if (content.trim()) formData.append('content', content.trim());
@@ -51,6 +68,9 @@ const CreatePost = ({ onSubmit }) => {
       await onSubmit(formData);
       setContent('');
       removeImage();
+      setFocused(false);
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Failed to publish post.');
     } finally {
       setLoading(false);
     }
@@ -61,7 +81,15 @@ const CreatePost = ({ onSubmit }) => {
       component={motion.div}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      sx={{ mb: 2, overflow: 'visible' }}
+      transition={{ duration: 0.35 }}
+      sx={{
+        mb: 2,
+        overflow: 'visible',
+        transition: 'box-shadow 0.3s ease',
+        ...(focused && {
+          boxShadow: '0 0 0 2px rgba(255, 97, 84, 0.15), 0 20px 40px rgba(45, 49, 66, 0.08)',
+        }),
+      }}
     >
       <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2 } }}>
         <Box sx={{ display: 'flex', gap: 1.5 }}>
@@ -78,7 +106,9 @@ const CreatePost = ({ onSubmit }) => {
               maxRows={6}
               placeholder="What's on your mind?"
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={(e) => { setContent(e.target.value); setError(''); }}
+              onFocus={() => setFocused(true)}
+              onBlur={() => !content && !image && setFocused(false)}
               variant="standard"
               InputProps={{
                 disableUnderline: true,
@@ -87,6 +117,23 @@ const CreatePost = ({ onSubmit }) => {
               id="create-post-input"
             />
 
+            {/* Validation error */}
+            <Collapse in={!!error}>
+              <Alert
+                severity="warning"
+                onClose={() => setError('')}
+                sx={{
+                  mt: 1,
+                  borderRadius: 2,
+                  fontSize: '0.8rem',
+                  py: 0,
+                  '& .MuiAlert-icon': { fontSize: 18 },
+                }}
+              >
+                {error}
+              </Alert>
+            </Collapse>
+
             {/* Image Preview */}
             <AnimatePresence>
               {preview && (
@@ -94,6 +141,7 @@ const CreatePost = ({ onSubmit }) => {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.25 }}
                 >
                   <Box
                     sx={{
@@ -143,7 +191,7 @@ const CreatePost = ({ onSubmit }) => {
                 pt: 1,
               }}
             >
-              <Box sx={{ display: 'flex', gap: 0.5 }}>
+              <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
                 <input
                   type="file"
                   accept="image/*"
@@ -154,10 +202,20 @@ const CreatePost = ({ onSubmit }) => {
                 <IconButton
                   onClick={() => fileRef.current?.click()}
                   size="small"
+                  component={motion.button}
+                  whileTap={{ scale: 0.85 }}
                   sx={{ color: '#FF6154' }}
                   id="image-upload-button"
                 >
                   <ImageRounded sx={{ fontSize: 22 }} />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  component={motion.button}
+                  whileTap={{ scale: 0.85 }}
+                  sx={{ color: '#9CA3AF' }}
+                >
+                  <EmojiEmotionsOutlined sx={{ fontSize: 22 }} />
                 </IconButton>
                 {image && (
                   <Chip
@@ -175,7 +233,13 @@ const CreatePost = ({ onSubmit }) => {
                 disabled={(!content.trim() && !image) || loading}
                 component={motion.button}
                 whileTap={{ scale: 0.92 }}
-                endIcon={<SendRounded sx={{ fontSize: '16px !important' }} />}
+                endIcon={
+                  loading ? (
+                    <CircularProgress size={14} sx={{ color: '#fff' }} />
+                  ) : (
+                    <SendRounded sx={{ fontSize: '16px !important' }} />
+                  )
+                }
                 sx={{
                   borderRadius: 50,
                   px: 2.5,
@@ -183,10 +247,11 @@ const CreatePost = ({ onSubmit }) => {
                   fontSize: '0.82rem',
                   fontWeight: 600,
                   textTransform: 'none',
+                  minWidth: 90,
                 }}
                 id="post-submit-button"
               >
-                {loading ? 'Posting...' : 'Post'}
+                {loading ? 'Posting' : 'Post'}
               </Button>
             </Box>
           </Box>

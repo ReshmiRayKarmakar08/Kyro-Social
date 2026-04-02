@@ -8,12 +8,19 @@ import {
   IconButton,
   Button,
   CardMedia,
+  Menu,
+  MenuItem,
+  ListItemIcon,
 } from '@mui/material';
 import {
   ChatBubbleOutlineRounded,
   ShareRounded,
   BookmarkBorderRounded,
+  BookmarkRounded,
   MoreHorizRounded,
+  FlagRounded,
+  PersonRemoveRounded,
+  LinkRounded,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -22,17 +29,45 @@ import CommentDrawer from './CommentDrawer';
 import { formatDate } from '../../utils/formatDate';
 import { useAuth } from '../../context/AuthContext';
 import logo from '../../assets/logo.png';
+import api from '../../api/axios';
 
 const PostCard = ({ post, onLike, onComment, index = 0 }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [commentOpen, setCommentOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState(null);
 
   const isLiked = post.likes?.some(
     (like) => like.username === user?.username
   );
   const isOwnPost = post.authorUsername === user?.username;
+
+  const handleFollow = async () => {
+    setIsFollowing(!isFollowing);
+    try {
+      await api.put(`/users/follow/${post.authorUsername}`);
+    } catch (err) {
+      setIsFollowing(!isFollowing); // revert
+    }
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Post by ${post.authorName}`,
+          text: post.content?.substring(0, 100),
+          url: window.location.href,
+        });
+      } catch (err) {
+        // User cancelled or share failed
+      }
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+    }
+  };
 
   return (
     <>
@@ -55,7 +90,7 @@ const PostCard = ({ post, onLike, onComment, index = 0 }) => {
                 bgcolor: '#FF6154',
                 cursor: 'pointer',
                 transition: 'transform 0.2s',
-                '&:hover': { transform: 'scale(1.05)' },
+                '&:hover': { transform: 'scale(1.08)' },
               }}
             >
               {post.authorName?.charAt(0)}
@@ -65,7 +100,7 @@ const PostCard = ({ post, onLike, onComment, index = 0 }) => {
                 <Typography
                   variant="subtitle2"
                   fontWeight={700}
-                  sx={{ cursor: 'pointer', '&:hover': { color: '#FF6154' } }}
+                  sx={{ cursor: 'pointer', '&:hover': { color: '#FF6154' }, transition: 'color 0.2s' }}
                   onClick={() => navigate(`/profile/${post.authorUsername}`)}
                 >
                   {post.authorName}
@@ -83,7 +118,7 @@ const PostCard = ({ post, onLike, onComment, index = 0 }) => {
               <Button
                 variant={isFollowing ? 'outlined' : 'contained'}
                 size="small"
-                onClick={() => setIsFollowing(!isFollowing)}
+                onClick={handleFollow}
                 component={motion.button}
                 whileTap={{ scale: 0.92 }}
                 sx={{
@@ -96,6 +131,7 @@ const PostCard = ({ post, onLike, onComment, index = 0 }) => {
                   ...(isFollowing && {
                     borderColor: 'rgba(0,0,0,0.12)',
                     color: '#6B7280',
+                    '&:hover': { borderColor: '#EF4444', color: '#EF4444', background: 'rgba(239,68,68,0.04)' },
                   }),
                 }}
                 id="follow-button"
@@ -104,9 +140,43 @@ const PostCard = ({ post, onLike, onComment, index = 0 }) => {
               </Button>
             )}
 
-            <IconButton size="small" sx={{ ml: 0.5, color: '#9CA3AF' }}>
+            <IconButton
+              size="small"
+              sx={{ ml: 0.5, color: '#9CA3AF' }}
+              onClick={(e) => setMenuAnchor(e.currentTarget)}
+            >
               <MoreHorizRounded fontSize="small" />
             </IconButton>
+
+            {/* Post Options Menu */}
+            <Menu
+              anchorEl={menuAnchor}
+              open={Boolean(menuAnchor)}
+              onClose={() => setMenuAnchor(null)}
+              PaperProps={{
+                sx: {
+                  borderRadius: 3,
+                  minWidth: 180,
+                  boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
+                  border: '1px solid rgba(0,0,0,0.06)',
+                },
+              }}
+            >
+              <MenuItem onClick={() => { handleShare(); setMenuAnchor(null); }}>
+                <ListItemIcon><LinkRounded fontSize="small" /></ListItemIcon>
+                Copy Link
+              </MenuItem>
+              {!isOwnPost && (
+                <MenuItem onClick={() => setMenuAnchor(null)}>
+                  <ListItemIcon><PersonRemoveRounded fontSize="small" /></ListItemIcon>
+                  Unfollow
+                </MenuItem>
+              )}
+              <MenuItem onClick={() => setMenuAnchor(null)} sx={{ color: 'error.main' }}>
+                <ListItemIcon><FlagRounded fontSize="small" color="error" /></ListItemIcon>
+                Report
+              </MenuItem>
+            </Menu>
           </Box>
 
           {/* Content */}
@@ -128,6 +198,8 @@ const PostCard = ({ post, onLike, onComment, index = 0 }) => {
           {/* Image */}
           {post.image && (
             <Box
+              component={motion.div}
+              whileHover={{ scale: 1.005 }}
               sx={{
                 borderRadius: 3,
                 overflow: 'hidden',
@@ -140,28 +212,27 @@ const PostCard = ({ post, onLike, onComment, index = 0 }) => {
                 image={post.image}
                 alt="Post image"
                 sx={{
-                  maxHeight: 400,
+                  maxHeight: 420,
                   objectFit: 'cover',
                   width: '100%',
                   borderRadius: 3,
-                  transition: 'transform 0.3s ease',
                   cursor: 'pointer',
-                  '&:hover': { transform: 'scale(1.01)' },
                 }}
               />
             </Box>
           )}
 
           {/* Action Bar */}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                mt: 1,
-                pt: 1,
-              }}
-            >
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              mt: 1,
+              pt: 1,
+              borderTop: '1px solid rgba(0,0,0,0.04)',
+            }}
+          >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               <LikeButton
                 liked={isLiked}
@@ -176,7 +247,7 @@ const PostCard = ({ post, onLike, onComment, index = 0 }) => {
                 <IconButton
                   size="small"
                   onClick={() => setCommentOpen(true)}
-                  sx={{ color: '#9CA3AF' }}
+                  sx={{ color: '#9CA3AF', '&:hover': { color: '#FF6154' }, transition: 'color 0.2s' }}
                   id="comment-button"
                 >
                   <ChatBubbleOutlineRounded sx={{ fontSize: 20 }} />
@@ -187,18 +258,59 @@ const PostCard = ({ post, onLike, onComment, index = 0 }) => {
               </motion.div>
 
               <motion.div whileTap={{ scale: 0.8 }}>
-                <IconButton size="small" sx={{ color: '#9CA3AF' }}>
+                <IconButton
+                  size="small"
+                  onClick={handleShare}
+                  sx={{ color: '#9CA3AF', '&:hover': { color: '#FF6154' }, transition: 'color 0.2s' }}
+                >
                   <ShareRounded sx={{ fontSize: 20 }} />
                 </IconButton>
               </motion.div>
             </Box>
 
             <motion.div whileTap={{ scale: 0.8 }}>
-              <IconButton size="small" sx={{ color: '#9CA3AF' }}>
-                <BookmarkBorderRounded sx={{ fontSize: 20 }} />
+              <IconButton
+                size="small"
+                onClick={() => setSaved(!saved)}
+                sx={{
+                  color: saved ? '#FF6154' : '#9CA3AF',
+                  transition: 'color 0.2s',
+                }}
+              >
+                {saved ? (
+                  <BookmarkRounded sx={{ fontSize: 20 }} />
+                ) : (
+                  <BookmarkBorderRounded sx={{ fontSize: 20 }} />
+                )}
               </IconButton>
             </motion.div>
           </Box>
+
+          {/* Engagement summary */}
+          {(post.likeCount > 0 || post.commentCount > 0) && (
+            <Box sx={{ display: 'flex', gap: 2, mt: 0.5 }}>
+              {post.likeCount > 0 && (
+                <Typography variant="caption" sx={{ color: '#6B7280', fontWeight: 600, fontSize: '0.76rem' }}>
+                  {post.likeCount} {post.likeCount === 1 ? 'Like' : 'Likes'}
+                </Typography>
+              )}
+              {post.commentCount > 0 && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: '#6B7280',
+                    fontWeight: 600,
+                    fontSize: '0.76rem',
+                    cursor: 'pointer',
+                    '&:hover': { color: '#FF6154' },
+                  }}
+                  onClick={() => setCommentOpen(true)}
+                >
+                  {post.commentCount} {post.commentCount === 1 ? 'Comment' : 'Comments'}
+                </Typography>
+              )}
+            </Box>
+          )}
         </CardContent>
       </Card>
 

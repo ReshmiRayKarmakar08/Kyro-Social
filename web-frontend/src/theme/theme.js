@@ -38,7 +38,7 @@ const theme = createTheme({
     borderRadius: 16,
   },
   typography: {
-    fontFamily: '"Plus Jakarta Sans", "Segoe UI", Roboto, sans-serif',
+    fontFamily: '"Inter", "Plus Jakarta Sans", "Segoe UI", Roboto, sans-serif',
     h1: {
       fontWeight: 800,
       fontSize: '2.5rem',
@@ -85,16 +85,21 @@ const theme = createTheme({
   },
   components: {
     MuiButton: {
+      defaultProps: {
+        disableElevation: true, // Remove standard shadows
+      },
       styleOverrides: {
         root: {
-          borderRadius: 50,
+          borderRadius: 16,
           padding: '10px 24px',
           fontSize: '0.9rem',
           boxShadow: 'none',
           textTransform: 'none',
           fontWeight: 700,
+          transition: 'all 0.2s ease-in-out',
           '&:hover': {
-            boxShadow: '0 8px 25px rgba(255, 97, 84, 0.25)',
+            boxShadow: 'none',
+            transform: 'scale(0.98)',
           },
         },
         containedPrimary: {

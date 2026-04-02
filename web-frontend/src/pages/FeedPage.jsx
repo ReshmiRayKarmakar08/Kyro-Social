@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Box, CircularProgress, Typography } from '@mui/material';
-import { AnimatePresence } from 'framer-motion';
+import { Box, Typography, Alert, Snackbar } from '@mui/material';
+import { AnimatePresence, motion } from 'framer-motion';
 import api from '../api/axios';
 import CreatePost from '../components/feed/CreatePost';
 import PostCard from '../components/feed/PostCard';
 import FeedTabs from '../components/feed/FeedTabs';
+import FeedSkeleton from '../components/feed/FeedSkeleton';
+import { mockPosts } from '../data/mockData';
 
 const FeedPage = () => {
   const [posts, setPosts] = useState([]);
@@ -13,6 +15,14 @@ const FeedPage = () => {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [usingMockData, setUsingMockData] = useState(false);
+
+  // Alert / Snackbar state
+  const [alert, setAlert] = useState({ open: false, message: '', severity: 'info' });
+
+  const showAlert = (message, severity = 'error') => {
+    setAlert({ open: true, message, severity });
+  };
 
   const fetchPosts = useCallback(async (pageNum = 1, filter = activeTab) => {
     try {
@@ -23,13 +33,29 @@ const FeedPage = () => {
       const newPosts = res.data.posts;
 
       if (pageNum === 1) {
-        setPosts(newPosts);
+        if (newPosts.length === 0) {
+          // No real posts yet -- fall back to mock data
+          setPosts(mockPosts);
+          setUsingMockData(true);
+          setHasMore(false);
+        } else {
+          setPosts(newPosts);
+          setUsingMockData(false);
+        }
       } else {
         setPosts((prev) => [...prev, ...newPosts]);
       }
-      setHasMore(res.data.pagination.hasMore);
+      if (newPosts.length > 0) {
+        setHasMore(res.data.pagination?.hasMore ?? false);
+      }
     } catch (err) {
       console.error('Feed fetch error:', err);
+      // On API failure, show mock data so the UI is never empty
+      if (pageNum === 1) {
+        setPosts(mockPosts);
+        setUsingMockData(true);
+        setHasMore(false);
+      }
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -43,6 +69,8 @@ const FeedPage = () => {
 
   // Infinite scroll
   useEffect(() => {
+    if (usingMockData) return; // No infinite scroll with mock data
+
     const handleScroll = () => {
       if (
         window.innerHeight + document.documentElement.scrollTop >=
@@ -59,27 +87,35 @@ const FeedPage = () => {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [hasMore, loadingMore, activeTab, fetchPosts]);
+  }, [hasMore, loadingMore, activeTab, fetchPosts, usingMockData]);
 
   // Create post
   const handleCreatePost = async (formData) => {
+    if (usingMockData) {
+      showAlert('Sign up and start posting! Mock data is shown for preview.', 'info');
+      return;
+    }
     try {
       const res = await api.post('/posts', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setPosts((prev) => [res.data.post, ...prev]);
+      showAlert('Post published successfully!', 'success');
     } catch (err) {
       console.error('Create post error:', err);
+      const message = err.response?.data?.message || 'Failed to create post. Please try again.';
+      showAlert(message);
       throw err;
     }
   };
 
   // Optimistic like
   const handleLike = async (postId) => {
+    const user = JSON.parse(localStorage.getItem('kyro_user'));
+
     setPosts((prev) =>
       prev.map((post) => {
         if (post._id !== postId) return post;
-        const user = JSON.parse(localStorage.getItem('kyro_user'));
         const alreadyLiked = post.likes?.some((l) => l.username === user?.username);
         return {
           ...post,
@@ -91,6 +127,8 @@ const FeedPage = () => {
       })
     );
 
+    if (usingMockData) return; // Don't call API for mock data
+
     try {
       await api.put(`/posts/${postId}/like`);
     } catch (err) {
@@ -101,12 +139,17 @@ const FeedPage = () => {
 
   // Optimistic comment
   const handleComment = async (postId, text) => {
+    if (!text.trim()) {
+      showAlert('Comment cannot be empty.', 'warning');
+      return;
+    }
+
     const user = JSON.parse(localStorage.getItem('kyro_user'));
     const tempComment = {
       _id: Date.now().toString(),
       userId: user?.id,
-      username: user?.username,
-      userName: user?.name,
+      username: user?.username || 'you',
+      userName: user?.name || 'You',
       userAvatar: user?.profilePicture,
       text,
       createdAt: new Date().toISOString(),
@@ -124,10 +167,13 @@ const FeedPage = () => {
       )
     );
 
+    if (usingMockData) return; // Don't call API for mock data
+
     try {
       await api.post(`/posts/${postId}/comment`, { text });
     } catch (err) {
       fetchPosts(1, activeTab);
+      showAlert('Failed to add comment. Please try again.');
     }
   };
 
@@ -136,12 +182,31 @@ const FeedPage = () => {
       <FeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
       <CreatePost onSubmit={handleCreatePost} />
 
+      {/* Mock data banner */}
+      {usingMockData && (
+        <Alert
+          severity="info"
+          sx={{
+            mb: 2,
+            borderRadius: 3,
+            fontSize: '0.82rem',
+            '& .MuiAlert-icon': { fontSize: 20 },
+          }}
+          id="mock-data-alert"
+        >
+          Showing sample posts for preview. Create your first post to get started!
+        </Alert>
+      )}
+
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
-          <CircularProgress sx={{ color: '#FF6154' }} />
-        </Box>
+        <FeedSkeleton count={3} />
       ) : posts.length === 0 ? (
-        <Box sx={{ textAlign: 'center', py: 8 }}>
+        <Box
+          component={motion.div}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          sx={{ textAlign: 'center', py: 8 }}
+        >
           <Typography variant="h6" color="text.secondary" fontWeight={600}>
             No posts yet
           </Typography>
@@ -150,7 +215,7 @@ const FeedPage = () => {
           </Typography>
         </Box>
       ) : (
-        <AnimatePresence>
+        <Box>
           {posts.map((post, index) => (
             <PostCard
               key={post._id}
@@ -160,14 +225,28 @@ const FeedPage = () => {
               index={index}
             />
           ))}
-        </AnimatePresence>
-      )}
-
-      {loadingMore && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
-          <CircularProgress size={28} sx={{ color: '#FF6154' }} />
         </Box>
       )}
+
+      {loadingMore && <FeedSkeleton count={1} />}
+
+      {/* Alert Snackbar */}
+      <Snackbar
+        open={alert.open}
+        autoHideDuration={4000}
+        onClose={() => setAlert((prev) => ({ ...prev, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        sx={{ bottom: { xs: 90, md: 24 } }}
+      >
+        <Alert
+          onClose={() => setAlert((prev) => ({ ...prev, open: false }))}
+          severity={alert.severity}
+          variant="filled"
+          sx={{ borderRadius: 3, fontWeight: 600, fontSize: '0.85rem' }}
+        >
+          {alert.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

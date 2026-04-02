@@ -8,26 +8,29 @@ import {
   Box,
   Typography,
   Divider,
+  Fab,
 } from '@mui/material';
 import {
   HomeRounded,
-  ExploreRounded,
+  SearchRounded,
   NotificationsNoneRounded,
   PersonOutlineRounded,
   BookmarkBorderRounded,
   SettingsRounded,
+  EditRounded,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import logo from '../../assets/logo.png';
 
 const DRAWER_WIDTH = 260;
 
 const navItems = [
-  { label: 'Feed', icon: <HomeRounded />, path: '/' },
-  { label: 'Explore', icon: <ExploreRounded />, path: '/explore' },
+  { label: 'Home', icon: <HomeRounded />, path: '/' },
+  { label: 'Explore', icon: <SearchRounded />, path: '/search' },
   { label: 'Notifications', icon: <NotificationsNoneRounded />, path: '/notifications' },
-  { label: 'Saved', icon: <BookmarkBorderRounded />, path: '/saved' },
+  { label: 'Profile', icon: <PersonOutlineRounded />, path: '/profile' },
   { label: 'Settings', icon: <SettingsRounded />, path: '/settings' },
 ];
 
@@ -35,6 +38,17 @@ const Sidebar = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const handleCreatePost = () => {
+    navigate('/');
+    setTimeout(() => {
+      const createInput = document.getElementById('create-post-input');
+      if (createInput) {
+        createInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => createInput.focus(), 400);
+      }
+    }, 100);
+  };
 
   return (
     <Drawer
@@ -51,12 +65,17 @@ const Sidebar = () => {
           top: 64,
           height: 'calc(100% - 64px)',
           background: '#FFFFFF',
+          display: 'flex',
+          flexDirection: 'column',
         },
       }}
     >
       <Box sx={{ p: 2.5 }}>
         {/* User Card */}
         <Box
+          component={motion.div}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => navigate(`/profile/${user?.username}`)}
           sx={{
             display: 'flex',
@@ -77,10 +96,10 @@ const Sidebar = () => {
           </Avatar>
           <Box sx={{ overflow: 'hidden' }}>
             <Typography variant="subtitle2" fontWeight={700} noWrap>
-              {user?.name}
+              {user?.name || 'User'}
             </Typography>
             <Typography variant="caption" color="text.secondary" noWrap>
-              @{user?.username}
+              @{user?.username || 'username'}
             </Typography>
           </Box>
         </Box>
@@ -110,17 +129,21 @@ const Sidebar = () => {
       {/* Navigation */}
       <List sx={{ px: 1.5, py: 1 }}>
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const itemPath = item.path === '/profile' && user ? `/profile/${user.username}` : item.path;
+          const isActive = location.pathname === itemPath || (item.path === '/profile' && location.pathname.startsWith('/profile/'));
           return (
             <ListItemButton
               key={item.label}
-              onClick={() => navigate(item.path)}
+              onClick={() => navigate(itemPath)}
+              component={motion.div}
+              whileTap={{ scale: 0.97 }}
               sx={{
                 borderRadius: 3,
                 mb: 0.5,
                 py: 1.2,
                 backgroundColor: isActive ? 'rgba(255, 97, 84, 0.08)' : 'transparent',
                 color: isActive ? '#FF6154' : '#4B5563',
+                transition: 'all 0.2s ease',
                 '&:hover': {
                   backgroundColor: isActive ? 'rgba(255, 97, 84, 0.12)' : '#F9FAFB',
                 },
@@ -146,10 +169,42 @@ const Sidebar = () => {
         })}
       </List>
 
+      {/* Create Post FAB */}
+      <Box sx={{ px: 2, mt: 2 }}>
+        <Fab
+          variant="extended"
+          color="primary"
+          onClick={handleCreatePost}
+          component={motion.button}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.95 }}
+          sx={{
+            width: '100%',
+            borderRadius: 50,
+            boxShadow: '0 8px 24px rgba(255, 97, 84, 0.3)',
+            background: 'linear-gradient(135deg, #FF6154 0%, #FF8A65 100%)',
+            fontWeight: 700,
+            fontSize: '0.9rem',
+            textTransform: 'none',
+            py: 3,
+            '&:hover': {
+              background: 'linear-gradient(135deg, #E8451C 0%, #FF6154 100%)',
+              boxShadow: '0 12px 32px rgba(255, 97, 84, 0.4)',
+            },
+          }}
+          id="sidebar-create-post"
+        >
+          <EditRounded sx={{ mr: 1 }} />
+          Create Post
+        </Fab>
+      </Box>
+
       {/* Profile Link */}
       <Box sx={{ mt: 'auto', px: 1.5, pb: 2 }}>
         <ListItemButton
           onClick={() => navigate(`/profile/${user?.username}`)}
+          component={motion.div}
+          whileTap={{ scale: 0.97 }}
           sx={{
             borderRadius: 3,
             py: 1.2,
