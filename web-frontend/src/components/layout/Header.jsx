@@ -141,20 +141,20 @@ const Header = () => {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              backgroundColor: 'rgba(0,0,0,0.035)',
+              backgroundColor: (theme) => theme.palette.mode === 'light' ? 'rgba(0,0,0,0.035)' : 'rgba(255,255,255,0.06)',
               borderRadius: '12px',
               px: 2,
               py: 0.8,
               border: '1px solid transparent',
               transition: 'all 0.2s ease',
               '&:focus-within': {
-                backgroundColor: '#fff',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+                backgroundColor: (theme) => theme.palette.mode === 'light' ? '#fff' : 'rgba(255,255,255,0.1)',
+                boxShadow: (theme) => theme.palette.mode === 'light' ? '0 10px 30px rgba(0,0,0,0.08)' : '0 10px 30px rgba(0,0,0,0.3)',
                 borderColor: 'rgba(255, 97, 84, 0.3)',
               },
             }}
           >
-            <SearchIcon sx={{ color: '#9CA3AF', mr: 1, fontSize: 18 }} />
+            <SearchIcon sx={{ color: 'text.disabled', mr: 1, fontSize: 18 }} />
             <InputBase
               placeholder="Search network..."
               value={searchValue}
@@ -166,7 +166,7 @@ const Header = () => {
                 flex: 1,
                 fontSize: '0.9rem',
                 fontWeight: 500,
-                '& input::placeholder': { color: '#9CA3AF', opacity: 1 },
+                '& input::placeholder': { color: 'text.secondary', opacity: 1 },
               }}
               id="header-search-input"
             />

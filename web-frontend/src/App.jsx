@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { ThemeProvider, CssBaseline, Box, CircularProgress } from '@mui/material';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import theme from './theme/theme';
 import Layout from './components/layout/Layout';
 import AuthPage from './pages/AuthPage';
 import FeedPage from './pages/FeedPage';

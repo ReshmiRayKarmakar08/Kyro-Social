@@ -7,7 +7,7 @@ const HEADER_HEIGHT = { xs: 60, sm: 72 };
 
 const Layout = ({ children }) => {
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-color)' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
       <Header />
       <Sidebar />
 

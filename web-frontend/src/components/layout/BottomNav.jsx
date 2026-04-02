@@ -51,11 +51,15 @@ const BottomNav = () => {
         elevation={0}
         sx={{
           borderRadius: '24px',
-          background: 'rgba(255, 255, 255, 0.75)',
+          background: (theme) => theme.palette.mode === 'light' 
+            ? 'rgba(255, 255, 255, 0.75)' 
+            : 'rgba(15, 23, 42, 0.85)',
           backdropFilter: 'blur(28px)',
           WebkitBackdropFilter: 'blur(28px)',
-          border: '1px solid rgba(0, 0, 0, 0.05)',
-          boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
+          border: (theme) => `1px solid ${theme.palette.divider}`,
+          boxShadow: (theme) => theme.palette.mode === 'light' 
+            ? '0 12px 40px rgba(0,0,0,0.12)' 
+            : '0 12px 40px rgba(0,0,0,0.4)',
           overflow: 'hidden',
         }}
       >
@@ -67,7 +71,7 @@ const BottomNav = () => {
             height: 68,
             background: 'transparent',
             '& .MuiBottomNavigationAction-root': {
-              color: '#9CA3AF',
+              color: 'text.secondary',
               minWidth: 'auto',
               flex: 1,
               transition: 'all 0.3s ease',

@@ -33,6 +33,7 @@ import {
   FavoriteRounded,
   ChatBubbleRounded,
   PhotoCameraRounded,
+  CloseRounded,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -88,6 +89,9 @@ const ProfilePage = () => {
   });
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [coverPhotoFile, setCoverPhotoFile] = useState(null);
+  const [imageViewerOpen, setImageViewerOpen] = useState(false);
+  const [imageViewerSrc, setImageViewerSrc] = useState('');
+  const [imageViewerTitle, setImageViewerTitle] = useState('');
   const [alert, setAlert] = useState({ open: false, message: '', severity: 'info' });
 
   const isOwnProfile = currentUser?.username === username;
@@ -272,6 +276,13 @@ const ProfilePage = () => {
     }
   };
 
+  const openImageViewer = (src, title) => {
+    if (!src) return;
+    setImageViewerSrc(src);
+    setImageViewerTitle(title);
+    setImageViewerOpen(true);
+  };
+
   if (loading) {
     return (
       <Box component={motion.div} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -296,17 +307,20 @@ const ProfilePage = () => {
     <Box>
       <Card component={motion.div} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} sx={{ mb: 2, overflow: 'hidden', borderRadius: 2, bgcolor: 'background.paper', border: (theme) => `1px solid ${theme.palette.divider}` }}>
         <Box
+          onClick={() => openImageViewer(profile.coverPhoto, `${profile.name}'s cover photo`)}
           sx={{
             height: { xs: 170, sm: 230 },
             background: profile.coverPhoto
               ? `url(${profile.coverPhoto}) center/cover`
               : 'linear-gradient(135deg, #FF6154 0%, #FF9B7A 50%, #FFD7CC 100%)',
             position: 'relative',
+            cursor: profile.coverPhoto ? 'zoom-in' : 'default',
           }}
         />
 
         <Box sx={{ px: 3, pb: 3, position: 'relative' }}>
           <Avatar
+            onClick={() => openImageViewer(profile.profilePicture || logo, `${profile.name}'s profile photo`)}
             src={profile.profilePicture || logo}
             sx={{
               width: 110,
@@ -317,6 +331,7 @@ const ProfilePage = () => {
               bgcolor: '#FF6154',
               fontSize: '2rem',
               fontWeight: 700,
+              cursor: 'zoom-in',
             }}
           >
             {profile.name?.charAt(0)}
@@ -553,6 +568,42 @@ const ProfilePage = () => {
               ))}
             </List>
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={imageViewerOpen}
+        onClose={() => setImageViewerOpen(false)}
+        fullWidth
+        maxWidth="lg"
+        PaperProps={{
+          sx: {
+            bgcolor: '#111',
+            borderRadius: 2,
+            overflow: 'hidden',
+          },
+        }}
+      >
+        <DialogTitle sx={{ color: '#fff', py: 1.2, pr: 6 }}>{imageViewerTitle}</DialogTitle>
+        <IconButton
+          onClick={() => setImageViewerOpen(false)}
+          sx={{ position: 'absolute', right: 8, top: 8, color: '#fff' }}
+        >
+          <CloseRounded />
+        </IconButton>
+        <DialogContent sx={{ p: 0, bgcolor: '#111' }}>
+          <Box
+            component="img"
+            src={imageViewerSrc}
+            alt={imageViewerTitle}
+            sx={{
+              width: '100%',
+              maxHeight: '80vh',
+              objectFit: 'contain',
+              display: 'block',
+              bgcolor: '#111',
+            }}
+          />
         </DialogContent>
       </Dialog>
     </Box>

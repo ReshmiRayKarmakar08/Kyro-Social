@@ -17,7 +17,6 @@ import {
   PersonOutlineRounded,
   BookmarkBorderRounded,
   EditRounded,
-  SettingsRounded,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -31,7 +30,6 @@ const navItems = [
   { label: 'Explore', icon: <SearchRounded />, path: '/search' },
   { label: 'Notifications', icon: <NotificationsNoneRounded />, path: '/notifications' },
   { label: 'Profile', icon: <PersonOutlineRounded />, path: '/profile' },
-  { label: 'Settings', icon: <SettingsRounded />, path: '/settings' },
 ];
 
 const Sidebar = () => {
@@ -60,7 +58,7 @@ const Sidebar = () => {
         '& .MuiDrawer-paper': {
           width: DRAWER_WIDTH,
           boxSizing: 'border-box',
-          borderRight: '1px solid rgba(0, 0, 0, 0.04)',
+          borderRight: (theme) => `1px solid ${theme.palette.divider}`,
           borderRadius: 0,
           top: 72, // Match new header height
           height: 'calc(100% - 72px)',
@@ -84,11 +82,11 @@ const Sidebar = () => {
             p: 1.5,
             borderRadius: '16px',
             cursor: 'pointer',
-            background: 'rgba(255,255,255,0.4)',
-            border: '1px solid rgba(0,0,0,0.03)',
+            background: (theme) => theme.palette.mode === 'light' ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.04)',
+            border: (theme) => `1px solid ${theme.palette.divider}`,
             mb: 3,
             transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-            '&:hover': { background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.04)' },
+            '&:hover': { background: (theme) => theme.palette.mode === 'light' ? '#fff' : 'rgba(255,255,255,0.08)', boxShadow: '0 8px 30px rgba(0,0,0,0.04)' },
           }}
         >
           <Box sx={{ position: 'relative' }}>
@@ -107,15 +105,15 @@ const Sidebar = () => {
                 height: 14,
                 bgcolor: '#10B981',
                 borderRadius: '50%',
-                border: '2px solid #fff',
+                border: (theme) => `2px solid ${theme.palette.background.paper}`,
               }}
             />
           </Box>
           <Box sx={{ overflow: 'hidden' }}>
-            <Typography variant="subtitle2" fontWeight={800} sx={{ color: '#1A1A2E', lineHeight: 1.2 }}>
+            <Typography variant="subtitle2" fontWeight={800} sx={{ color: 'text.primary', lineHeight: 1.2 }}>
               {user?.name || 'Kyro User'}
             </Typography>
-            <Typography variant="caption" sx={{ color: '#9CA3AF', fontWeight: 600 }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>
               @{user?.username || 'user'}
             </Typography>
           </Box>
@@ -140,11 +138,11 @@ const Sidebar = () => {
                   py: 1.4,
                   px: 2,
                   backgroundColor: 'transparent',
-                  color: isActive ? '#FF6154' : '#6B7280',
+                  color: isActive ? '#FF6154' : 'text.secondary',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   position: 'relative',
                   '&:hover': {
-                    backgroundColor: 'rgba(0,0,0,0.02)',
+                    backgroundColor: (theme) => theme.palette.mode === 'light' ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.04)',
                     color: '#FF6154',
                     '& .nav-icon': { transform: 'translateX(4px)' }
                   },
@@ -170,7 +168,7 @@ const Sidebar = () => {
                   className="nav-icon"
                   sx={{
                     minWidth: 38,
-                    color: isActive ? '#FF6154' : '#9CA3AF',
+                    color: isActive ? '#FF6154' : 'text.disabled',
                     transition: 'all 0.3s ease',
                   }}
                 >
@@ -224,9 +222,9 @@ const Sidebar = () => {
           onClick={handleCreatePost}
           sx={{
             borderRadius: '14px',
-            color: '#9CA3AF',
+            color: 'text.secondary',
             py: 1.2,
-            '&:hover': { color: '#FF6154', backgroundColor: 'rgba(0,0,0,0.02)' }
+            '&:hover': { color: '#FF6154', backgroundColor: (theme) => theme.palette.mode === 'light' ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.04)' }
           }}
         >
           <ListItemIcon sx={{ minWidth: 38, color: 'inherit' }}>
