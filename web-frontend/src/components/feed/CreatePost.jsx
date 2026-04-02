@@ -107,7 +107,7 @@ const CreatePost = ({ onSubmit }) => {
           value={postMode}
           onChange={(_, val) => val && setPostMode(val)}
           sx={{
-            bgcolor: '#F3F4F6',
+            bgcolor: (theme) => theme.palette.mode === 'light' ? '#F3F4F6' : 'rgba(255,255,255,0.06)',
             borderRadius: '999px',
             p: '2px',
             '& .MuiToggleButton-root': {
@@ -115,7 +115,7 @@ const CreatePost = ({ onSubmit }) => {
               borderRadius: '999px',
               px: 1.4,
               py: 0.45,
-              color: '#9CA3AF',
+              color: 'text.secondary',
               fontWeight: 700,
               fontSize: '0.75rem',
               textTransform: 'none',
@@ -203,7 +203,7 @@ const CreatePost = ({ onSubmit }) => {
               justifyContent: 'space-between',
               mt: focused || content || preview ? 1.6 : 0.8,
               pt: focused || content || preview ? 1.4 : 0,
-              borderTop: focused || content || preview ? '1px solid rgba(0,0,0,0.05)' : 'none',
+              borderTop: focused || content || preview ? (theme) => `1px solid ${theme.palette.divider}` : 'none',
             }}
           >
             <Box sx={{ display: 'flex', gap: 0.8 }}>
@@ -211,10 +211,10 @@ const CreatePost = ({ onSubmit }) => {
               <IconButton onClick={() => fileRef.current?.click()} sx={{ color: '#FF6154' }} id="image-upload-button">
                 <ImageRounded sx={{ fontSize: 22 }} />
               </IconButton>
-              <IconButton sx={{ color: '#6B7280' }}>
+              <IconButton sx={{ color: 'text.secondary' }}>
                 <EmojiEmotionsOutlined sx={{ fontSize: 22 }} />
               </IconButton>
-              <IconButton sx={{ color: '#6B7280' }}>
+              <IconButton sx={{ color: 'text.secondary' }}>
                 <FormatListBulletedRounded sx={{ fontSize: 21 }} />
               </IconButton>
               <Button

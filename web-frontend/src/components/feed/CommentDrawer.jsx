@@ -51,6 +51,7 @@ const CommentDrawer = ({ open, onClose, comments = [], onAddComment, postId }) =
           maxHeight: '75vh',
           borderRadius: '24px 24px 0 0',
           overflow: 'hidden',
+          bgcolor: 'background.paper',
         },
       }}
     >
@@ -62,7 +63,7 @@ const CommentDrawer = ({ open, onClose, comments = [], onAddComment, postId }) =
           justifyContent: 'space-between',
           px: 2.5,
           py: 2,
-          borderBottom: '1px solid rgba(0,0,0,0.06)',
+          borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
         }}
       >
         <Typography variant="h6" fontWeight={700} fontSize="1rem">
@@ -80,7 +81,7 @@ const CommentDrawer = ({ open, onClose, comments = [], onAddComment, postId }) =
             width: 40,
             height: 4,
             borderRadius: 2,
-            backgroundColor: '#E5E7EB',
+            backgroundColor: 'text.disabled',
           }}
         />
       </Box>
@@ -136,7 +137,7 @@ const CommentDrawer = ({ open, onClose, comments = [], onAddComment, postId }) =
                       </Box>
                       <Typography
                         variant="body2"
-                        sx={{ mt: 0.3, color: '#374151', lineHeight: 1.5 }}
+                        sx={{ mt: 0.3, color: 'text.primary', lineHeight: 1.5 }}
                       >
                         {comment.text}
                       </Typography>
@@ -158,8 +159,8 @@ const CommentDrawer = ({ open, onClose, comments = [], onAddComment, postId }) =
           gap: 1,
           px: 2,
           py: 1.5,
-          borderTop: '1px solid rgba(0,0,0,0.06)',
-          backgroundColor: '#FAFAFA',
+          borderTop: (theme) => `1px solid ${theme.palette.divider}`,
+          bgcolor: (theme) => theme.palette.mode === 'light' ? '#FAFAFA' : 'background.default',
         }}
       >
         <Avatar
@@ -180,7 +181,7 @@ const CommentDrawer = ({ open, onClose, comments = [], onAddComment, postId }) =
           sx={{
             '& .MuiOutlinedInput-root': {
               borderRadius: '20px',
-              backgroundColor: '#fff',
+              bgcolor: 'background.paper',
               fontSize: '0.875rem',
             },
           }}

@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion';
-import { IconButton } from '@mui/material';
+import { IconButton, useTheme } from '@mui/material';
 import { FavoriteBorderRounded, FavoriteRounded } from '@mui/icons-material';
 
 const LikeButton = ({ liked, count, onToggle }) => {
+  const theme = useTheme();
+  const inactiveColor = theme.palette.text.secondary;
+
   return (
     <motion.div
       style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
@@ -12,7 +15,7 @@ const LikeButton = ({ liked, count, onToggle }) => {
         onClick={onToggle}
         size="small"
         sx={{
-          color: liked ? '#EF4444' : '#9CA3AF',
+          color: liked ? '#EF4444' : inactiveColor,
           transition: 'color 0.15s ease',
         }}
         id="like-button"
@@ -37,7 +40,7 @@ const LikeButton = ({ liked, count, onToggle }) => {
         style={{
           fontSize: '0.82rem',
           fontWeight: 600,
-          color: liked ? '#EF4444' : '#9CA3AF',
+          color: liked ? '#EF4444' : inactiveColor,
           userSelect: 'none',
         }}
       >

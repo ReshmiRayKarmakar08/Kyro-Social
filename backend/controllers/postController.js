@@ -549,3 +549,48 @@ exports.getUserPosts = asyncHandler(async (req, res) => {
     },
   });
 });
+
+exports.getPostLikes = asyncHandler(async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return res.status(400).json({ message: 'Invalid post id' });
+  }
+
+  const post = await Post.findById(req.params.id).select('likes');
+  if (!post) {
+    return res.status(404).json({ message: 'Post not found' });
+  }
+
+  res.status(200).json({
+    likes: (post.likes || []).map((username) => ({ username })),
+    likeCount: (post.likes || []).length,
+  });
+});
+
+exports.incrementShare = asyncHandler(async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return res.status(400).json({ message: 'Invalid post id' });
+  }
+
+  const post = await Post.findByIdAndUpdate(
+    req.params.id,
+    { $inc: { shareCount: 1 } },
+    { new: true, runValidators: false }
+  ).select('shareCount');
+
+  if (!post) {
+    return res.status(404).json({ message: 'Post not found' });
+  }
+
+  const io = getIO();
+  if (io) {
+    io.emit('post:shared', {
+      postId: req.params.id,
+      shareCount: post.shareCount || 0,
+    });
+  }
+
+  res.status(200).json({
+    message: 'Share count updated',
+    shareCount: post.shareCount || 0,
+  });
+});
