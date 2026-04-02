@@ -171,6 +171,10 @@ const SettingsPage = () => {
             <ListItemIcon><PersonOutlineRounded /></ListItemIcon>
             <ListItemText primary="Edit profile" secondary="Name, bio, avatar, website" />
           </ListItem>
+          <ListItem button onClick={() => navigate('/saved')}>
+            <ListItemIcon><BookmarkBorderRounded /></ListItemIcon>
+            <ListItemText primary="Saved posts" secondary="View posts you bookmarked" />
+          </ListItem>
           <ListItem button onClick={() => navigate('/')}>
             <ListItemIcon><InsightsRounded /></ListItemIcon>
             <ListItemText primary="Your activity" secondary="Posts, likes and comments" />
@@ -349,10 +353,6 @@ const SettingsPage = () => {
           <ListItem button onClick={() => setAlert({ open: true, message: 'Archive export request submitted.', severity: 'success' })}>
             <ListItemIcon><DownloadRounded /></ListItemIcon>
             <ListItemText primary="Archiving and downloading" secondary="Request your data export" />
-          </ListItem>
-          <ListItem button onClick={() => navigate('/saved')}>
-            <ListItemIcon><BookmarkBorderRounded /></ListItemIcon>
-            <ListItemText primary="Saved posts" secondary="View posts you bookmarked" />
           </ListItem>
         </List>
 

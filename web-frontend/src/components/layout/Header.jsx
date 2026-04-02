@@ -26,6 +26,7 @@ import {
   SettingsRounded as SettingsIcon,
   DarkModeRounded as MoonIcon,
   LightModeRounded as SunIcon,
+  BookmarkBorderRounded as BookmarkIcon,
 } from '@mui/icons-material';
 import { useThemeContext } from '../../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
@@ -293,6 +294,10 @@ const Header = () => {
             <MenuItem onClick={() => { handleCloseMenu(); navigate('/settings'); }}>
               <ListItemIcon><SettingsIcon fontSize="small" /></ListItemIcon>
               Settings
+            </MenuItem>
+            <MenuItem onClick={() => { handleCloseMenu(); navigate('/saved'); }}>
+              <ListItemIcon><BookmarkIcon fontSize="small" /></ListItemIcon>
+              Saved
             </MenuItem>
             <Divider />
             <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }} id="menu-logout">
