@@ -1,6 +1,8 @@
+# Dependencies
 node_modules/
 .env
-.DS_Store
+
+# Build Artifacts
 dist/
 dist-ssr/
 *.local
@@ -8,10 +10,23 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Android
+**/android/.gradle/
+**/android/app/build/
+**/android/build/
+**/android/.idea/
+**/android/local.properties
+**/android/app/.cxx/
+**/android/app/build/
+*.lock
+*.bin
+
+# IDEs
+.idea/
+.vscode/
+
 # Non-Project Files
 .agents/
 *.pdf
-problem statement.pdf
-sample photo.pdf
 problem statement.pdf
 sample photo.pdf
