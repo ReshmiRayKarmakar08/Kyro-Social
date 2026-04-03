@@ -9,14 +9,14 @@
 
   <p>
     <a href="https://kyro-social.vercel.app/"><strong>💻 Live Web Application</strong></a> ·
-    <a href="#"><strong>📱 Google Play Store</strong></a> <i>(Coming Soon)</i>
+    <a href="#"><strong>📱 Google Play Store</strong></a>
   </p>
   
   <p>
     <img src="https://img.shields.io/badge/React-19.0-blue?logo=react&logoColor=white" alt="React" />
     <img src="https://img.shields.io/badge/React_Native-0.79.1-61DAFB?logo=react&logoColor=black" alt="React Native" />
     <img src="https://img.shields.io/badge/Node.js-Express-339933?logo=node.js&logoColor=white" alt="Node" />
-    <img src="https://img.shields.io/badge/MongoDB-Database-47A248?logo=mongodb&logoColor=white" alt="MongoDB" />
+    <img src="https://img.shields.io/badge/MongoDB-Database-47A248?logo=mongodb&logoColor=white" alt="MongoDB" 
     <img src="https://img.shields.io/badge/Socket.IO-Real_Time-010101?logo=socket.io&logoColor=white" alt="Socket.IO" />
   </p>
 </div>
