@@ -1,7 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// IMPORTANT: Change this to your backend URL
+// config
 // - Android emulator: http://10.0.2.2:5001/api
 // - Physical device: http://<YOUR_PC_IP>:5001/api
 // - Production: https://your-backend.onrender.com/api
@@ -31,7 +31,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-// Response interceptor: handle 401 globally
+// global 401 handler
 // Navigation reset is handled in AuthContext
 api.interceptors.response.use(
   (response) => response,

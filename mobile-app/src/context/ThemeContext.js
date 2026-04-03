@@ -18,7 +18,7 @@ export const ThemeContextProvider = ({ children }) => {
         const saved = await AsyncStorage.getItem('kyro_theme_mode');
         if (saved) setMode(saved);
       } catch {
-        // ignore
+
       }
     };
     loadTheme();

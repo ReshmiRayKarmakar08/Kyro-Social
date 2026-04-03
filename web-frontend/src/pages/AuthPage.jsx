@@ -45,7 +45,7 @@ const inputStyles = {
 const AuthPage = () => {
   const { signup, login, guestLogin, googleLogin, verifyOTP, resendOTP, forgotPassword, resetPassword } = useAuth();
 
-  // View: 'login' | 'signup' | 'otp' | 'forgot' | 'reset'
+  // state flag
   const [view, setView] = useState('login');
   const [direction, setDirection] = useState(1);
   const [loading, setLoading] = useState(false);

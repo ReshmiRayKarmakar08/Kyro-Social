@@ -138,7 +138,7 @@ export const AuthProvider = ({ children }) => {
       setNotifications(res.data.notifications || []);
       setUnreadNotifications(res.data.unreadCount || 0);
     } catch {
-      // ignore
+
     }
   }, [token]);
 

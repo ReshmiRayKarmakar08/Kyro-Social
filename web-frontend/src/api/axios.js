@@ -9,7 +9,7 @@ const api = axios.create({
   },
 });
 
-// Request interceptor: attach JWT token
+// attach token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('kyro_token');
@@ -21,7 +21,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor: handle 401 globally
+// global 401 handler
 api.interceptors.response.use(
   (response) => response,
   (error) => {

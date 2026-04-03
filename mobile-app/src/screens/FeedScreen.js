@@ -144,7 +144,7 @@ const FeedScreen = () => {
   };
 
   const handleComment = (postId) => {
-    // For now, show a simple alert. Full comment drawer will be added later.
+    // TODO: UI
     Alert.alert('Comments', 'Comment drawer coming in next phase');
   };
 

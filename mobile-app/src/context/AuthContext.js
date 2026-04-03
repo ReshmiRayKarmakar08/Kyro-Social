@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await AsyncStorage.multiRemove(['kyro_token', 'kyro_user']);
     } catch (e) {
-      // ignore
+
     }
     if (socketRef.current) {
       socketRef.current.disconnect();
@@ -154,7 +154,7 @@ export const AuthProvider = ({ children }) => {
       setNotifications(res.data.notifications || []);
       setUnreadNotifications(res.data.unreadCount || 0);
     } catch {
-      // ignore
+
     }
   }, [token]);
 
@@ -164,7 +164,7 @@ export const AuthProvider = ({ children }) => {
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       setUnreadNotifications(0);
     } catch {
-      // ignore
+
     }
   };
 

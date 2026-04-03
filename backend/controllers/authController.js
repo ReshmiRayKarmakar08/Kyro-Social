@@ -250,7 +250,7 @@ exports.googleAuth = asyncHandler(async (req, res) => {
     try {
       await sendWelcomeEmail(user.email, user.name);
     } catch (error) {
-      // ignore
+
     }
   } else {
     const now = new Date();

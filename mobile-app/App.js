@@ -6,7 +6,7 @@ import { AuthProvider } from './src/context/AuthContext';
 import { ThemeContextProvider, useThemeContext } from './src/context/ThemeContext';
 import AppNavigator from './src/navigation/AppNavigator';
 
-// Suppress known RN warnings in dev
+// log suppression
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
   'VirtualizedLists should never be nested',

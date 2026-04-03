@@ -111,7 +111,7 @@ const PostCard = ({ post, onLike, onComment, onDelete, onSave, onDeleteComment, 
         });
       }
     } catch {
-      // ignore
+
     }
   };
 

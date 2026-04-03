@@ -1,4 +1,4 @@
-// Mock data for development and initial display when backend has no posts
+// default dev mocks
 
 export const mockPosts = [
   {

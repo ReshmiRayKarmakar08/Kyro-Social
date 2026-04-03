@@ -1,5 +1,4 @@
 // Kyro Social Brand Design Tokens
-// Ported from web-frontend/src/theme/theme.js
 
 export const Colors = {
   primary: '#FF6154',
@@ -81,5 +80,4 @@ export const Fonts = {
   },
 };
 
-// Helper: get theme-aware colors
 export const getColors = (isDark) => (isDark ? Colors.dark : Colors.light);

@@ -33,9 +33,9 @@ const MainStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
-/* ------------------------------------------------------------------ */
+
 /* Custom Drawer Content                                               */
-/* ------------------------------------------------------------------ */
+
 const CustomDrawerContent = (props) => {
   const { user, logout, unreadNotifications } = useAuth();
   const { theme, toggleTheme, isDark } = useThemeContext();
@@ -137,9 +137,9 @@ const CustomDrawerContent = (props) => {
   );
 };
 
-/* ------------------------------------------------------------------ */
+
 /* Bottom Tabs                                                         */
-/* ------------------------------------------------------------------ */
+
 const BottomTabs = () => {
   const { theme } = useThemeContext();
   const { unreadNotifications } = useAuth();
@@ -213,9 +213,9 @@ const BottomTabs = () => {
   );
 };
 
-/* ------------------------------------------------------------------ */
+
 /* Main Drawer (wraps tabs + standalone screens)                       */
-/* ------------------------------------------------------------------ */
+
 const MainDrawer = () => {
   const { theme } = useThemeContext();
 
@@ -238,9 +238,9 @@ const MainDrawer = () => {
   );
 };
 
-/* ------------------------------------------------------------------ */
+
 /* Auth Navigator                                                      */
-/* ------------------------------------------------------------------ */
+
 const AuthNavigator = () => (
   <AuthStack.Navigator
     screenOptions={{
@@ -255,9 +255,9 @@ const AuthNavigator = () => (
   </AuthStack.Navigator>
 );
 
-/* ------------------------------------------------------------------ */
+
 /* Root Navigator                                                      */
-/* ------------------------------------------------------------------ */
+
 const AppNavigator = () => {
   const { isAuthenticated, loading } = useAuth();
   const { theme } = useThemeContext();

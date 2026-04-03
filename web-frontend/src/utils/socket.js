@@ -17,7 +17,7 @@ export const getSocketUrl = () => {
     }
   }
 
-  // For proxied local dev (`/api`), use same-origin so Vite proxy forwards `/socket.io`.
+  // proxy setup
   return window.location.origin;
 };
 

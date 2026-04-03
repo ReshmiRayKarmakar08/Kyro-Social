@@ -36,9 +36,9 @@ import { useAuth } from '../context/AuthContext';
 import logo from '../assets/logo.png';
 import { getSocketOptions, getSocketUrl } from '../utils/socket';
 
-/* ------------------------------------------------------------------ */
+
 /* Helpers                                                            */
-/* ------------------------------------------------------------------ */
+
 const timeAgo = (date) => {
   if (!date) return '';
   const diff = (Date.now() - new Date(date).getTime()) / 1000;
@@ -54,9 +54,9 @@ const formatTime = (date) => {
   return new Date(date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
 };
 
-/* ------------------------------------------------------------------ */
+
 /* Conversation List Item                                             */
-/* ------------------------------------------------------------------ */
+
 const ConversationItem = ({ conv, isActive, onSelect }) => (
   <Box
     component={motion.div}
@@ -156,9 +156,9 @@ const ConversationItem = ({ conv, isActive, onSelect }) => (
   </Box>
 );
 
-/* ------------------------------------------------------------------ */
+
 /* Conversation List Panel                                            */
-/* ------------------------------------------------------------------ */
+
 const ConversationList = ({
   conversations,
   activeId,
@@ -295,9 +295,9 @@ const ConversationList = ({
   </Box>
 );
 
-/* ------------------------------------------------------------------ */
+
 /* Chat View                                                          */
-/* ------------------------------------------------------------------ */
+
 const ChatView = ({ conversation, currentUser, onBack, socketRef, onLocalMessage, isSplitView }) => {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
@@ -841,9 +841,9 @@ const ChatView = ({ conversation, currentUser, onBack, socketRef, onLocalMessage
   );
 };
 
-/* ------------------------------------------------------------------ */
+
 /* Main Page                                                          */
-/* ------------------------------------------------------------------ */
+
 const MessagesPage = () => {
   const { user } = useAuth();
   const theme = useTheme();
