@@ -1,4 +1,4 @@
 import {AppRegistry} from 'react-native';
-import App from './App.test'; // TEMP: minimal test to verify native build
+import App from './App';
 
 AppRegistry.registerComponent('KyroSocial', () => App);

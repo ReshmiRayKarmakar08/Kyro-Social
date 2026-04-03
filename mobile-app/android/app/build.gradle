@@ -28,7 +28,11 @@ react {
 
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
-    // nodeExecutableAndArgs = ["node"]
+    // Force a project-local Node.js (LTS) for RN codegen when global Node is too new.
+    def bundledNode = file("../../node_modules/node/bin/node.exe")
+    if (bundledNode.exists()) {
+        nodeExecutableAndArgs = [bundledNode.absolutePath]
+    }
     //
     //   The command to run when bundling. By default is 'bundle'
     // bundleCommand = "ram-bundle"
