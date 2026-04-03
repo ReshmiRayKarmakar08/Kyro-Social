@@ -566,7 +566,7 @@ const AuthPage = () => {
                     disabled={loading}
                     sx={{ mt: 1, textTransform: 'none', fontWeight: 700, color: '#6B7280' }}
                   >
-                    Continue as Guest
+                    {/* Continue as Guest */}
                   </Button>
                   {renderGoogleButton()}
                   <Box sx={{ textAlign: 'center', mt: 4, pt: 1 }}>
