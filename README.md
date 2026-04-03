@@ -190,18 +190,10 @@ npx react-native run-android
 
 ## 📸 Platform Screenshots
 
-> *(Repository maintainers: Insert your application snapshots below by updating the image references)*
+| Desktop Dashboard | Mobile News Feed |
+| :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/1a915459-6264-4c11-9aee-77297cf36e04" width="100%" alt="Desktop Dashboard" /> | <img src="https://github.com/user-attachments/assets/17536cca-4842-454f-a666-970c868765ab" width="100%" alt="Mobile News Feed" /> |
 
-<table align="center">
-  <tr>
-    <td align="center"><strong>Mobile News Feed</strong></td>
-    <td align="center"><strong>Desktop Dashboard</strong></td>
-  </tr>
-  <tr>
-    <td><img src="https://via.placeholder.com/350x700.png?text=Mobile+App" alt="Mobile App" width="250"/></td>
-    <td><img src="https://via.placeholder.com/800x450.png?text=Web+App" alt="Web App" width="600"/></td>
-  </tr>
-</table>
 
 ---
 
