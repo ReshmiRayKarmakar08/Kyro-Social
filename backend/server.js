@@ -105,6 +105,19 @@ const start = async () => {
 
   server.listen(PORT, () => {
     console.log(`Kyro Social API running on port ${PORT}`);
+
+    // keep awake on render free tier
+    const renderUrl = process.env.RENDER_EXTERNAL_URL;
+    if (renderUrl) {
+      setInterval(async () => {
+        try {
+          const response = await fetch(`${renderUrl}/api/health`);
+          console.log(`keep-awake ping sent. status: ${response.status}`);
+        } catch (error) {
+          console.error(`keep-awake ping failed: ${error.message}`);
+        }
+      }, 10 * 60 * 1000); // 10 minutes
+    }
   });
 };
 
