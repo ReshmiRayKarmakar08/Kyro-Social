@@ -12,11 +12,11 @@ To solve this, we use a **two-layer keep-alive strategy** powered by an active *
 ## 🩺 The Unified Health Endpoint (`/api/health`)
 
 - **URL**: `https://kyro-social-backend.onrender.com/api/health`
-- **Method**: `GET`
+- **Supported Methods**: `GET` and `HEAD` (UptimeRobot uses `HEAD` by default; Cron-Job.org uses `GET`)
 - **What it does**:
   1. Checks Node.js/Express process health, uptime, and memory usage.
   2. Executes an active database ping: `mongoose.connection.db.command({ ping: 1 })`.
-  3. Returns **HTTP 200 OK** if both the server and MongoDB Atlas respond successfully.
+  3. Returns **HTTP 200 OK** (with `X-Database-Status` and `X-Database-Latency` headers) if both the server and MongoDB Atlas respond successfully.
   4. Returns **HTTP 503** if MongoDB is disconnected or encountering an error.
 
 ### Example Response:

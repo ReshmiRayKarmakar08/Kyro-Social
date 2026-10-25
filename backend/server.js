@@ -38,8 +38,9 @@ const authLimiter = rateLimit({
   message: { message: 'Too many authentication requests. Please try again later.' },
 });
 
-// Comprehensive Health Route - Pings both Server process and MongoDB Database
-app.get('/api/health', async (req, res) => {
+// Comprehensive Health Route Handler - Supports both GET & HEAD requests
+// Pings both Server process and MongoDB Database to keep both awake
+const handleHealthCheck = async (req, res) => {
   const startTime = Date.now();
   let dbStatus = 'disconnected';
   let dbPingMs = null;
@@ -66,6 +67,19 @@ app.get('/api/health', async (req, res) => {
   const isHealthy = dbStatus === 'connected';
   const totalResponseTimeMs = Date.now() - startTime;
 
+  // Add custom response headers for lightweight HEAD monitoring
+  res.setHeader('X-Server-Status', 'up');
+  res.setHeader('X-Database-Status', dbStatus);
+  if (dbPingMs !== null) {
+    res.setHeader('X-Database-Latency', `${dbPingMs}ms`);
+  }
+
+  // HEAD requests (e.g., UptimeRobot default free tier) - return status and headers only
+  if (req.method === 'HEAD') {
+    return res.status(isHealthy ? 200 : 503).end();
+  }
+
+  // GET requests (e.g., Cron-Job.org, browser checks) - return full diagnostic JSON
   const payload = {
     status: isHealthy ? 'ok' : 'degraded',
     uptime: Math.floor(process.uptime()),
@@ -87,7 +101,10 @@ app.get('/api/health', async (req, res) => {
   };
 
   return res.status(isHealthy ? 200 : 503).json(payload);
-});
+};
+
+// Register both GET and HEAD routes
+app.route('/api/health').get(handleHealthCheck).head(handleHealthCheck);
 
 app.use('/api/auth', authLimiter, require('./routes/authRoutes'));
 app.use('/api/posts', require('./routes/postRoutes'));
