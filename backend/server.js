@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { Server } = require('socket.io');
 
+const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 const { notFound, errorHandler } = require('./middleware/error');
 const { setIO } = require('./utils/socket');
@@ -37,8 +38,55 @@ const authLimiter = rateLimit({
   message: { message: 'Too many authentication requests. Please try again later.' },
 });
 
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+// Comprehensive Health Route - Pings both Server process and MongoDB Database
+app.get('/api/health', async (req, res) => {
+  const startTime = Date.now();
+  let dbStatus = 'disconnected';
+  let dbPingMs = null;
+  let dbError = null;
+
+  try {
+    const readyState = mongoose.connection.readyState;
+    // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
+    if (readyState === 1 && mongoose.connection.db) {
+      const dbPingStart = Date.now();
+      // Actively touch MongoDB database to keep Atlas connection hot and prevent idling
+      await mongoose.connection.db.command({ ping: 1 });
+      dbPingMs = Date.now() - dbPingStart;
+      dbStatus = 'connected';
+    } else {
+      const stateMap = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
+      dbStatus = stateMap[readyState] || 'unknown';
+    }
+  } catch (err) {
+    dbStatus = 'error';
+    dbError = err.message;
+  }
+
+  const isHealthy = dbStatus === 'connected';
+  const totalResponseTimeMs = Date.now() - startTime;
+
+  const payload = {
+    status: isHealthy ? 'ok' : 'degraded',
+    uptime: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+    server: {
+      status: 'up',
+      environment: process.env.NODE_ENV || 'production',
+      memory: {
+        rss: `${Math.round(process.memoryUsage().rss / 1024 / 1024)} MB`,
+        heapUsed: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB`,
+      },
+    },
+    database: {
+      status: dbStatus,
+      latency: dbPingMs !== null ? `${dbPingMs}ms` : undefined,
+      error: dbError || undefined,
+    },
+    totalResponseTime: `${totalResponseTimeMs}ms`,
+  };
+
+  return res.status(isHealthy ? 200 : 503).json(payload);
 });
 
 app.use('/api/auth', authLimiter, require('./routes/authRoutes'));
@@ -106,17 +154,34 @@ const start = async () => {
   server.listen(PORT, () => {
     console.log(`Kyro Social API running on port ${PORT}`);
 
-    // keep awake on render free tier
-    const renderUrl = process.env.RENDER_EXTERNAL_URL;
-    if (renderUrl) {
-      setInterval(async () => {
+    // Layer 1: Self-ping system to keep Render web service & MongoDB Atlas hot
+    const rawPingUrl = process.env.SELF_PING_URL || process.env.RENDER_EXTERNAL_URL || process.env.BACKEND_URL;
+    if (rawPingUrl) {
+      const cleanUrl = rawPingUrl.replace(/\/+$/, '');
+      const healthUrl = cleanUrl.endsWith('/api/health') ? cleanUrl : `${cleanUrl}/api/health`;
+      const pingInterval = Number(process.env.PING_INTERVAL_MS) || 10 * 60 * 1000; // 10 minutes
+
+      console.log(`[Keep-Alive] Layer 1 self-ping initialized: ${healthUrl} (interval: ${Math.round(pingInterval / 60000)}m)`);
+
+      const triggerPing = async () => {
         try {
-          const response = await fetch(`${renderUrl}/api/health`);
-          console.log(`keep-awake ping sent. status: ${response.status}`);
+          const response = await fetch(healthUrl);
+          const data = await response.json().catch(() => ({}));
+          console.log(
+            `[Keep-Alive] Ping sent to ${healthUrl} | Status: ${response.status} | DB: ${data.database?.status || 'unknown'} | Latency: ${data.database?.latency || 'N/A'}`
+          );
         } catch (error) {
-          console.error(`keep-awake ping failed: ${error.message}`);
+          console.error(`[Keep-Alive] Ping failed: ${error.message}`);
         }
-      }, 10 * 60 * 1000); // 10 minutes
+      };
+
+      // Initial ping after 30 seconds to verify startup connectivity
+      setTimeout(triggerPing, 30 * 1000);
+
+      // Recurring ping interval
+      setInterval(triggerPing, pingInterval);
+    } else {
+      console.log('[Keep-Alive] No RENDER_EXTERNAL_URL or SELF_PING_URL configured. Self-ping idle.');
     }
   });
 };
