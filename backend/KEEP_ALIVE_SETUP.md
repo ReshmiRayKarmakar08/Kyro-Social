@@ -11,7 +11,7 @@ To solve this, we use a **two-layer keep-alive strategy** powered by an active *
 
 ## 🩺 The Unified Health Endpoint (`/api/health`)
 
-- **URL**: `https://<your-render-backend-name>.onrender.com/api/health`
+- **URL**: `https://kyro-social-backend.onrender.com/api/health`
 - **Method**: `GET`
 - **What it does**:
   1. Checks Node.js/Express process health, uptime, and memory usage.
@@ -68,7 +68,7 @@ Using 2 independent external pingers ensures 100% redundancy: if one service has
 3. Configure the monitor:
    - **Monitor Type**: `HTTP(s)`
    - **Friendly Name**: `Kyro Social Backend Health`
-   - **URL (or IP)**: `https://<your-render-backend-name>.onrender.com/api/health`
+   - **URL (or IP)**: `https://kyro-social-backend.onrender.com/api/health`
    - **Monitoring Interval**: `5 minutes` or `10 minutes`
    - **Monitor Timeout**: `30 seconds`
 4. Click **"Create Monitor"**.
@@ -84,7 +84,7 @@ Using 2 independent external pingers ensures 100% redundancy: if one service has
 2. Go to the **"Cronjobs"** tab and click **"Create cronjob"**.
 3. Configure the cronjob:
    - **Title**: `Kyro Render & DB Ping`
-   - **URL**: `https://<your-render-backend-name>.onrender.com/api/health`
+   - **URL**: `https://kyro-social-backend.onrender.com/api/health`
    - **Schedule**: `User-defined` -> **"Every 10 minutes"** (or every 12 minutes)
    - **Request Method**: `GET`
    - **Failures / Notifications**: Enable email alert if desired
@@ -105,7 +105,7 @@ If you prefer an alternative to either service:
 
 1. Open your browser and navigate to:
    ```
-   https://<your-backend>.onrender.com/api/health
+   https://kyro-social-backend.onrender.com/api/health
    ```
 2. Verify you get:
    - Status code: `200 OK`
